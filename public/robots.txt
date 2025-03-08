@@ -1,0 +1,8 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Disallow: /mes-annonces
+Disallow: /creer-annonce
+Disallow: /modifier-annonce
+Disallow: /admin
+
+Sitemap: https://freeauto.ch/sitemap.xml
