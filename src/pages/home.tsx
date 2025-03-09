@@ -164,7 +164,7 @@ export default function Home({ user }: HomeProps) {
           <div className="container px-4 mx-auto">
             <div className="h-16 flex items-center justify-between">
               <Link to="/" className="flex items-center gap-2">
-                <span className="text-2xl font-serif">FreeAuto</span>
+                <h1 className="text-2xl font-serif">FreeAuto</h1>
               </Link>
 
               <div className="flex items-center gap-4">

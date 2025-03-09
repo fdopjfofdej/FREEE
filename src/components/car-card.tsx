@@ -41,7 +41,7 @@ export function CarCard({ car }: CarCardProps) {
           {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {car.expertisee && (
-              <Badge className="bg-emerald-600 text-white">
+              <Badge className="bg-emerald-600 text-black">
                 <ShieldCheck className="w-3 h-3 mr-1" />
                 Expertisée
               </Badge>
@@ -76,8 +76,8 @@ export function CarCard({ car }: CarCardProps) {
         <div className="p-4">
           {/* Title & Price */}
           <div className="mb-3">
-            <h3 className="font-medium text-lg mb-1 line-clamp-1">{car.title}</h3>
-            <p className="text-xl font-bold text-primary">{formatCurrency(car.price)}</p>
+            <h2 className="font-medium text-lg mb-1 line-clamp-1">{car.title}</h2>
+            <h3 className="text-xl font-bold text-primary">{formatCurrency(car.price)}</h3>
           </div>
 
           {/* Specs Grid */}
