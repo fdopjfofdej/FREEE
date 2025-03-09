@@ -1,12 +1,21 @@
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 export function LanguageSelector() {
   const { i18n } = useTranslation();
-  const currentLanguage = i18n.language; // Langue actuellement sélectionnée
+  const currentLanguage = i18n.language;
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
+    localStorage.setItem("selectedLanguage", lng);
   };
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("selectedLanguage");
+    if (savedLanguage) {
+      i18n.changeLanguage(savedLanguage);
+    }
+  }, [i18n]);
 
   return (
     <div className="flex items-center justify-center space-x-2 p-2 bg-gray-100 rounded-full shadow-md w-fit mx-auto">
