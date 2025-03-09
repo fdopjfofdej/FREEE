@@ -280,7 +280,7 @@ export function CarDetails() {
                     !isAuthenticated && "blur-content"
                   )}>
                     <p className="text-muted-foreground whitespace-pre-line">
-                      {car.description || "Aucune description fournie"}
+                      {car.description || t('Aucune description fournie')}
                     </p>
                   </div>
                 </div>
@@ -299,7 +299,7 @@ export function CarDetails() {
                     <div className="space-y-2 sm:space-y-3">
                       <div className="flex items-center justify-between text-xs sm:text-sm">
                         <span className="text-muted-foreground">{t('Transmission')}</span>
-                        <span className="font-medium truncate ml-2">{car.transmission || "-"}</span>
+                        <span className="font-medium truncate ml-2">{t(car.transmission || "-")}</span>
                       </div>
                       <div className="flex items-center justify-between text-xs sm:text-sm">
                         <span className="text-muted-foreground">{t('Places')}</span>
@@ -313,7 +313,7 @@ export function CarDetails() {
                     <div className="space-y-2 sm:space-y-3">
                       <div className="flex items-center justify-between text-xs sm:text-sm">
                         <span className="text-muted-foreground">{t('Couleur')}</span>
-                        <span className="font-medium truncate ml-2">{car.couleur || "-"}</span>
+                        <span className="font-medium truncate ml-2">{t(car.couleur || "-")}</span>
                       </div>
                       <div className="flex items-center justify-between text-xs sm:text-sm">
                         <span className="text-muted-foreground">{t('Cylindrée')}</span>
@@ -349,7 +349,7 @@ export function CarDetails() {
                             className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 p-2 rounded-lg"
                           >
                             <Check className="h-4 w-4 text-primary" />
-                            {option}
+                            {t(option)}
                           </div>
                         ))}
                       </div>
@@ -422,7 +422,7 @@ export function CarDetails() {
                 <div className="text-sm text-muted-foreground space-y-2">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4" />
-                    <p>{('Ne payez jamais à l\'avance')}</p>
+                    <p>{t("Ne payez jamais à l'avance")}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Shield className="h-4 w-4" />

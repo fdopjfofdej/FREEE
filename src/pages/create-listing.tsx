@@ -18,7 +18,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { ImageUpload } from "@/components/image-upload"
-import { VehicleSearch } from "@/components/vehicle-search"
 import { Switch } from "@/components/ui/switch"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -30,8 +29,10 @@ import {
 } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/lib/supabase"
-import { TYPE_VEHICULES, CARBURANTS, TRANSMISSIONS, COULEURS, OPTIONS, CarQueryVehicle, Car } from "@/types"
+import { TYPE_VEHICULES, CARBURANTS, TRANSMISSIONS, COULEURS, OPTIONS, Car } from "@/types"
 import { Camera, FileText, Settings, Phone, Loader2, ArrowLeft } from "lucide-react"
+import { LanguageSelector } from '@/components/language-selector'
+import { useTranslation } from 'react-i18next'
 
 const carSchema = z.object({
   images: z.array(z.string()).default([]),
@@ -146,6 +147,7 @@ const triggerConfetti = () => {
 }
 
 export default function CreateListing({ initialData }: CreateListingProps) {
+  const { t } = useTranslation()
   const [step, setStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
@@ -225,12 +227,6 @@ export default function CreateListing({ initialData }: CreateListingProps) {
     }
   }
 
-  const handleVehicleSelect = (vehicle: CarQueryVehicle) => {
-    form.setValue("brand", vehicle.make_display)
-    form.setValue("model", vehicle.model_name)
-    form.setValue("year", parseInt(vehicle.model_year))
-  }
-
   const onSubmit = async (data: CarFormValues) => {
     try {
       setIsSubmitting(true)
@@ -305,19 +301,20 @@ export default function CreateListing({ initialData }: CreateListingProps) {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-2xl font-bold">
-                {initialData ? "Modifier l'annonce" : steps[step - 1].title}
+                {initialData ? t("Modifier l'annonce") : t(steps[step - 1].title)}
               </h1>
               <p className="text-muted-foreground">
-                {initialData ? "Modifiez les informations de votre annonce" : steps[step - 1].description}
+                {initialData ? t("Modifiez les informations de votre annonce") : t(steps[step - 1].description)}
               </p>
             </div>
+            <LanguageSelector />
             <Button
               variant="ghost"
               onClick={() => navigate('/mes-annonces')}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
-              Retour
+              {t('Retour')}
             </Button>
           </div>
 
@@ -348,7 +345,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       "text-xs mt-2 font-medium transition-colors duration-300 hidden sm:block",
                       step === s.id ? "text-primary" : "text-muted-foreground"
                     )}>
-                      {s.title}
+                      {t(s.title)}
                     </span>
                   </div>
                 ))}
@@ -364,7 +361,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                   name="images"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Photos du véhicule</FormLabel>
+                      <FormLabel>{t('Photos du véhicule')}</FormLabel>
                       <FormControl>
                         <ImageUpload
                           value={field.value}
@@ -373,7 +370,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                         />
                       </FormControl>
                       <FormDescription>
-                        Ajoutez jusqu'à 5 photos de votre véhicule
+                        {t("Ajoutez jusqu'à 5 photos de votre véhicule")}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -383,24 +380,13 @@ export default function CreateListing({ initialData }: CreateListingProps) {
 
               {(step === 2 || initialData) && (
                 <>
-                  <FormItem>
-                    <FormLabel>Rechercher un véhicule</FormLabel>
-                    <VehicleSearch 
-                      onSelect={handleVehicleSelect}
-                      placeholder="Rechercher une marque ou un modèle"
-                    />
-                    <FormDescription>
-                      Recherchez votre véhicule pour remplir automatiquement les informations
-                    </FormDescription>
-                  </FormItem>
-
                   <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="brand"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Marque</FormLabel>
+                          <FormLabel>{t("Marque")}</FormLabel>
                           <FormControl>
                             <Input placeholder="Ex: Peugeot" {...field} />
                           </FormControl>
@@ -413,7 +399,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       name="model"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Modèle</FormLabel>
+                          <FormLabel>{t("Modèle")}</FormLabel>
                           <FormControl>
                             <Input placeholder="Ex: 308" {...field} />
                           </FormControl>
@@ -428,10 +414,10 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel>{t('Description')}</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Décrivez votre véhicule en détail..."
+                            placeholder={t("Décrivez votre véhicule en détail...")}
                             className="resize-none"
                             {...field}
                           />
@@ -447,7 +433,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       name="price"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Prix</FormLabel>
+                          <FormLabel>{t("Prix")}</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -455,7 +441,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                               {...field}
                             />
                           </FormControl>
-                          <FormDescription>En francs suisses (CHF)</FormDescription>
+                          <FormDescription>{t('En francs suisses (CHF)')}</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -465,7 +451,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       name="year"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Année</FormLabel>
+                          <FormLabel>{t("Année")}</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -482,7 +468,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       name="mileage"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Kilométrage</FormLabel>
+                          <FormLabel>{t("Kilométrage")}</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -490,7 +476,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                               {...field}
                             />
                           </FormControl>
-                          <FormDescription>En kilomètres</FormDescription>
+                          <FormDescription>{t("En kilomètres")}</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -507,17 +493,17 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       name="type_vehicule"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Type de véhicule</FormLabel>
+                          <FormLabel>{t("Type de véhicule")}</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Sélectionnez un type" />
+                                <SelectValue placeholder={t("Sélectionnez un type")} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               {TYPE_VEHICULES.map((type) => (
                                 <SelectItem key={type} value={type}>
-                                  {type}
+                                  {t(type)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -532,17 +518,17 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       name="carburant"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Carburant</FormLabel>
+                          <FormLabel>{t("Carburant")}</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Sélectionnez un carburant" />
+                                <SelectValue placeholder={t("Sélectionnez un carburant")} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               {CARBURANTS.map((carburant) => (
                                 <SelectItem key={carburant} value={carburant}>
-                                  {carburant}
+                                  {t(carburant)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -557,17 +543,17 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       name="transmission"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Transmission</FormLabel>
+                          <FormLabel>{t("Transmission")}</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Sélectionnez une transmission" />
+                                <SelectValue placeholder={t("Sélectionnez une transmission")} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               {TRANSMISSIONS.map((transmission) => (
                                 <SelectItem key={transmission} value={transmission}>
-                                  {transmission}
+                                  {t(transmission)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -582,17 +568,17 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       name="couleur"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Couleur</FormLabel>
+                          <FormLabel>{t("Couleur")}</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Sélectionnez une couleur" />
+                                <SelectValue placeholder={t("Sélectionnez une couleur")} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               {COULEURS.map((couleur) => (
                                 <SelectItem key={couleur} value={couleur}>
-                                  {couleur}
+                                  {t(couleur)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -609,7 +595,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       name="puissance"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Puissance (ch)</FormLabel>
+                          <FormLabel>{t("Puissance (ch)")}</FormLabel>
                           <FormControl>
                             <Input type="number" placeholder="150" {...field} />
                           </FormControl>
@@ -622,7 +608,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       name="cylindree"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Cylindrée (cm³)</FormLabel>
+                          <FormLabel>{t("Cylindrée (cm³)")}</FormLabel>
                           <FormControl>
                             <Input type="number" placeholder="1998" {...field} />
                           </FormControl>
@@ -635,7 +621,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       name="portes"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Nombre de portes</FormLabel>
+                          <FormLabel>{t("Nombre de portes")}</FormLabel>
                           <FormControl>
                             <Input type="number" placeholder="5" {...field} />
                           </FormControl>
@@ -648,7 +634,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       name="places"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Nombre de places</FormLabel>
+                          <FormLabel>{t("Nombre de places")}</FormLabel>
                           <FormControl>
                             <Input type="number" placeholder="5" {...field} />
                           </FormControl>
@@ -661,7 +647,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       name="consommation"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Consommation (L/100km)</FormLabel>
+                          <FormLabel>{t("Consommation (L/100km)")}</FormLabel>
                           <FormControl>
                             <Input type="number" step="0.1" placeholder="5.5" {...field} />
                           </FormControl>
@@ -678,9 +664,9 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       render={({ field }) => (
                         <FormItem className="flex items-center justify-between rounded-lg border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel>Garantie</FormLabel>
+                            <FormLabel>{t("Garantie")}</FormLabel>
                             <FormDescription>
-                              Proposez vous une garantie ?
+                              {t("Proposez vous une garantie ?")}
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -699,9 +685,9 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       render={({ field }) => (
                         <FormItem className="flex items-center justify-between rounded-lg border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel>Première main</FormLabel>
+                            <FormLabel>{t("Première main")}</FormLabel>
                             <FormDescription>
-                              Vous êtes le premier propriétaire
+                              {t("Vous êtes le premier propriétaire")}
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -720,9 +706,9 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       render={({ field }) => (
                         <FormItem className="flex items-center justify-between rounded-lg border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel>Expertisée</FormLabel>
+                            <FormLabel>{t("Expertisée")}</FormLabel>
                             <FormDescription>
-                              Le véhicule a passé l'expertise
+                              {t("Le véhicule a passé l'expertise")}
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -742,9 +728,9 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                     render={() => (
                       <FormItem>
                         <div className="mb-4">
-                          <FormLabel>Options</FormLabel>
+                          <FormLabel>{t("Options")}</FormLabel>
                           <FormDescription>
-                            Sélectionnez les options du véhicule
+                            {t("Sélectionnez les options du véhicule")}
                           </FormDescription>
                         </div>
                         <div className="grid grid-cols-2 gap-2">
@@ -774,7 +760,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                                       />
                                     </FormControl>
                                     <FormLabel className="font-normal">
-                                      {option}
+                                      {t(option)}
                                     </FormLabel>
                                   </FormItem>
                                 )
@@ -797,9 +783,9 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                     render={({ field }) => (
                       <FormItem className="flex items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
-                          <FormLabel>Professionnel</FormLabel>
+                          <FormLabel>{t("Professionnel")}</FormLabel>
                           <FormDescription>
-                            Vous êtes un professionnel de l'automobile
+                            {t("Vous êtes un professionnel de l'automobile")}
                           </FormDescription>
                         </div>
                         <FormControl>
@@ -818,7 +804,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       name="company_name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Nom de l'entreprise</FormLabel>
+                          <FormLabel>{t("Nom de l'entreprise")}</FormLabel>
                           <FormControl>
                             <Input placeholder="Garage XYZ" {...field} />
                           </FormControl>
@@ -833,12 +819,12 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                     name="phone_number"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Numéro de téléphone</FormLabel>
+                        <FormLabel>{t("Numéro de téléphone")}</FormLabel>
                         <FormControl>
                           <Input placeholder="0791234567" {...field} />
                         </FormControl>
                         <FormDescription>
-                          Format: 0791234567 ou +41791234567
+                          {t("Format: 0791234567 ou +41791234567")}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -850,7 +836,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                     name="city"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Ville</FormLabel>
+                        <FormLabel>{t("Ville")}</FormLabel>
                         <FormControl>
                           <Input placeholder="Strasbourg" {...field} />
                         </FormControl>
@@ -858,16 +844,6 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       </FormItem>
                     )}
                   />
-                  {/* <FormItem>
-                    <FormLabel>Ville</FormLabel>
-                    <input type="text"
-                      className="border-2 border-gray-300 p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      placeholder="Rechercher une ville"
-                      value={form.getValues("city")}
-                      onChange={(e) => form.setValue("city", e.target.value)}
-                    />
-                    <FormMessage />
-                  </FormItem> */}
                 </>
               )}
 
@@ -880,18 +856,18 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                       onClick={prevStep}
                       disabled={step === 1}
                     >
-                      Précédent
+                      {t("Précédent")}
                     </Button>
                     {step < steps.length ? (
                       <Button type="button" onClick={nextStep}>
-                        Suivant
+                        {t("Suivant")}
                       </Button>
                     ) : (
                       <Button type="submit" disabled={isSubmitting}>
                         {isSubmitting && (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        Publier l'annonce
+                        {t("Publier l'annonce")}
                       </Button>
                     )}
                   </>
@@ -901,7 +877,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                     {isSubmitting && (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     )}
-                    Enregistrer les modifications
+                    {t("Enregistrer les modifications")}
                   </Button>
                 )}
               </div>

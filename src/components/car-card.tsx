@@ -99,7 +99,7 @@ export function CarCard({ car }: CarCardProps) {
             </div>
             <div className="flex flex-col items-center bg-gray-50 rounded p-2">
               <Fuel className="w-4 h-4 text-gray-500 mb-1" />
-              <span className="text-sm font-medium">{car.carburant || "-"}</span>
+              <span className="text-sm font-medium">{t(car.carburant || "-")}</span>
             </div>
           </div>
 
@@ -113,7 +113,7 @@ export function CarCard({ car }: CarCardProps) {
                 car.transmission === "Manuelle" && "bg-primary text-white"
               )}
             >
-              {car.transmission || t("Non spécifié")}
+              {t(car.transmission || "Non spécifié")}
             </Badge>
 
             {car.is_professional && car.company_name && (

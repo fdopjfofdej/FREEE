@@ -18,4 +18,5 @@ export interface CarFilter {
   is_professional?: boolean;
   searchTerms?: string;
   city?: string;
+  garantie?: boolean;
 }

@@ -18,8 +18,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { LanguageSelector } from '@/components/language-selector'
+import { useTranslation } from 'react-i18next'
 
 export function MyListings() {
+  const { t } = useTranslation()
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -48,8 +51,8 @@ export function MyListings() {
     } catch (error) {
       console.error('Error fetching cars:', error);
       toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors du chargement de vos annonces",
+        title: t("Erreur"),
+        description: t("Une erreur est survenue lors du chargement de vos annonces"),
         variant: "destructive",
       });
     } finally {
@@ -69,14 +72,14 @@ export function MyListings() {
 
       setCars(cars.filter(car => car.id !== id));
       toast({
-        title: "Annonce supprimée",
-        description: "Votre annonce a été supprimée avec succès",
+        title: t("Annonce supprimée"),
+        description: t("Votre annonce a été supprimée avec succès"),
       });
     } catch (error) {
       console.error('Error deleting car:', error);
       toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la suppression",
+        title: t("Erreur"),
+        description: t("Une erreur est survenue lors de la suppression"),
         variant: "destructive",
       });
     } finally {
@@ -95,8 +98,8 @@ export function MyListings() {
   return (
     <>
       <Helmet>
-        <title>Mes annonces - FreeAuto</title>
-        <meta name="description" content="Gérez vos annonces automobiles sur FreeAuto. Modifiez, supprimez ou créez de nouvelles annonces." />
+        <title>{t("Mes annonces")} - FreeAuto</title>
+        <meta name="description" content={t("Gérez vos annonces automobiles sur FreeAuto. Modifiez, supprimez ou créez de nouvelles annonces.")} />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
@@ -107,18 +110,21 @@ export function MyListings() {
               <Link to="/" className="flex items-center gap-2">
                 <span className="text-2xl font-serif">FreeAuto</span>
               </Link>
-              <Button asChild variant="ghost">
-                <Link to="/">Retour aux annonces</Link>
-              </Button>
+              <div className='flex items-center gap-4'>
+                <LanguageSelector />
+                <Button asChild variant="ghost">
+                  <Link to="/">{t("Retour aux annonces")}</Link>
+                </Button>
+              </div>
             </div>
           </div>
         </header>
 
         <main className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-8">
-            <h1 className="text-2xl font-bold">Mes annonces</h1>
+            <h1 className="text-2xl font-bold">{t("Mes annonces")}</h1>
             <Button asChild>
-              <Link to="/creer-annonce">Créer une annonce</Link>
+              <Link to="/creer-annonce">{t("Créer une annonce")}</Link>
             </Button>
           </div>
 
@@ -152,14 +158,14 @@ export function MyListings() {
                         <AlertDialogHeader>
                           <AlertDialogTitle className="flex items-center gap-2">
                             <AlertTriangle className="h-5 w-5 text-destructive" />
-                            Supprimer l'annonce
+                            {t("Supprimer l'annonce")}
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            Êtes-vous sûr de vouloir supprimer cette annonce ? Cette action est irréversible.
+                            {t("Êtes-vous sûr de vouloir supprimer cette annonce ? Cette action est irréversible.")}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Annuler</AlertDialogCancel>
+                          <AlertDialogCancel>{t("Annuler")}</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => handleDelete(car.id)}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -167,7 +173,7 @@ export function MyListings() {
                             {deletingId === car.id ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
                             ) : (
-                              "Supprimer"
+                              t("Supprimer")
                             )}
                           </AlertDialogAction>
                         </AlertDialogFooter>
@@ -181,13 +187,13 @@ export function MyListings() {
             <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
               <span className="text-4xl font-serif mb-4 opacity-50">FreeAuto</span>
               <h3 className="text-2xl font-semibold text-muted-foreground">
-                Aucune annonce
+                {t("Aucune annonce")}
               </h3>
               <p className="text-muted-foreground mt-2 mb-6">
-                Vous n'avez pas encore publié d'annonces
+                {t("Vous n'avez pas encore publié d'annonces")}
               </p>
               <Button asChild>
-                <Link to="/creer-annonce">Publier une annonce</Link>
+                <Link to="/creer-annonce">{t("Publier une annonce")}</Link>
               </Button>
             </div>
           )}

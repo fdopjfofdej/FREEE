@@ -4,6 +4,7 @@ import { ImagePlus, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { supabase } from "@/lib/supabase"
+import { useTranslation } from 'react-i18next'
 
 interface ImageUploadProps {
   value: string[]
@@ -12,6 +13,7 @@ interface ImageUploadProps {
 }
 
 export function ImageUpload({ value = [], onChange, maxFiles = 5 }: ImageUploadProps) {
+  const { t } = useTranslation()
   const [uploading, setUploading] = useState(false)
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -95,14 +97,14 @@ export function ImageUpload({ value = [], onChange, maxFiles = 5 }: ImageUploadP
             <div className="text-center p-4">
               <ImagePlus className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
               <p className="text-sm text-muted-foreground">
-                {isDragActive ? "Déposez vos images ici" : "Glissez-déposez ou cliquez pour ajouter"}
+                {isDragActive ? t("Déposez vos images ici") : t("Glissez-déposez ou cliquez pour ajouter")}
               </p>
             </div>
           </div>
         )}
       </div>
       <p className="text-xs text-muted-foreground">
-        {value.length} sur {maxFiles} images ({maxFiles - value.length} restantes)
+        {value.length} {t("sur")} {maxFiles} {t("images")} {(maxFiles - value.length)} {t("restantes")}
       </p>
     </div>
   )
