@@ -31,6 +31,7 @@ import {
   AlertTriangle,
   Mail,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const signUpSchema = z
   .object({
@@ -74,6 +75,7 @@ export function AuthDialog({
   showIcon = false,
   children,
 }: AuthDialogProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('signup');
@@ -185,13 +187,13 @@ export function AuthDialog({
         {children || (
           <Button variant={variant} size={size} className="gap-2">
             {showIcon && <Plus className="h-4 w-4" />}
-            Créer une annonce
+            {t('Create an Ad')}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
-          <DialogTitle>Bienvenue sur FreeAuto</DialogTitle>
+          <DialogTitle>{t('Welcome to FreeAuto')}</DialogTitle>
         </DialogHeader>
 
         <div className="grid grid-cols-3 gap-4 py-6">
@@ -199,19 +201,19 @@ export function AuthDialog({
             <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
               <Shield className="h-5 w-5 text-primary" />
             </div>
-            <p className="text-sm font-medium">Vendeurs vérifiés</p>
+            <p className="text-sm font-medium">{t('Verified Sellers')}</p>
           </div>
           <div className="text-center space-y-2">
             <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
               <MessageSquare className="h-5 w-5 text-primary" />
             </div>
-            <p className="text-sm font-medium">Contact direct</p>
+            <p className="text-sm font-medium">{t('Direct Contact')}</p>
           </div>
           <div className="text-center space-y-2">
             <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
               <Eye className="h-5 w-5 text-primary" />
             </div>
-            <p className="text-sm font-medium">Détails complets</p>
+            <p className="text-sm font-medium">{t('Complete Details')}</p>
           </div>
         </div>
 
@@ -224,8 +226,8 @@ export function AuthDialog({
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="signup">Inscription</TabsTrigger>
-            <TabsTrigger value="signin">Connexion</TabsTrigger>
+            <TabsTrigger value="signup">{t('Sign Up')}</TabsTrigger>
+            <TabsTrigger value="signin">{t('Sign In')}</TabsTrigger>
           </TabsList>
           <TabsContent value="signup">
             <Form {...signUpForm}>
@@ -238,9 +240,9 @@ export function AuthDialog({
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>{t('Email')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="votre@email.com" {...field} />
+                        <Input placeholder={t('your@email.com')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -251,7 +253,7 @@ export function AuthDialog({
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Mot de passe</FormLabel>
+                      <FormLabel>{t('Password')}</FormLabel>
                       <FormControl>
                         <Input
                           type="password"
@@ -268,7 +270,7 @@ export function AuthDialog({
                   name="confirmPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Confirmer le mot de passe</FormLabel>
+                      <FormLabel>{t('Confirm Password')}</FormLabel>
                       <FormControl>
                         <Input
                           type="password"
@@ -289,12 +291,12 @@ export function AuthDialog({
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Inscription en cours...
+                      {t('Sign Up in Progress...')}
                     </>
                   ) : (
                     <>
                       <Mail className="h-4 w-4" />
-                      S'inscrire avec un email
+                      {t('Sign Up with Email')}
                     </>
                   )}
                 </Button>
@@ -312,9 +314,9 @@ export function AuthDialog({
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>{t('Email')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="votre@email.com" {...field} />
+                        <Input placeholder={t('your@email.com')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -325,7 +327,7 @@ export function AuthDialog({
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Mot de passe</FormLabel>
+                      <FormLabel>{t('Password')}</FormLabel>
                       <FormControl>
                         <Input
                           type="password"
@@ -342,12 +344,12 @@ export function AuthDialog({
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Connexion en cours...
+                      {t('Sign In in Progress...')}
                     </>
                   ) : (
                     <>
                       <Mail className="h-4 w-4" />
-                      Se connecter avec un email
+                      {t('Sign In with Email')}
                     </>
                   )}
                 </Button>

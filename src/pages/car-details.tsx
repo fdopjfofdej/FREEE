@@ -44,8 +44,11 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
+import { LanguageSelector } from '@/components/language-selector'
+import { useTranslation } from 'react-i18next'
 
 export function CarDetails() {
+  const { t } = useTranslation()
   const { id } = useParams()
   const [car, setCar] = useState<Car | null>(null)
   const [loading, setLoading] = useState(true)
@@ -111,10 +114,10 @@ export function CarDetails() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Annonce introuvable</h1>
-          <p className="mt-2 text-gray-600">Cette annonce n'existe plus ou a été supprimée.</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('Annonce introuvable')}</h1>
+          <p className="mt-2 text-gray-600">{t('Cette annonce n\'existe plus ou a été supprimée.')}</p>
           <Button asChild className="mt-4">
-            <Link to="/">Retour aux annonces</Link>
+            <Link to="/">{t('Retour aux annonces')}</Link>
           </Button>
         </div>
       </div>
@@ -139,11 +142,12 @@ export function CarDetails() {
               </div>
 
               <div className="flex items-center gap-4">
+                <LanguageSelector />
                 {!isAuthenticated && (
                   <AuthDialog>
                     <Button size="sm" className="gap-2">
                       <Plus className="h-4 w-4" />
-                      <span>Créer une annonce</span>
+                      <span>{t('Créer une annonce')}</span>
                     </Button>
                   </AuthDialog>
                 )}
@@ -201,7 +205,7 @@ export function CarDetails() {
                             className="bg-primary text-white font-medium flex items-center gap-1"
                           >
                             <Award className="h-3 w-3" />
-                            1ère main
+                            {t('1ère main')}
                           </Badge>
                         )}
                         {car.expertisee && (
@@ -209,7 +213,7 @@ export function CarDetails() {
                             className="bg-green-600 text-white font-medium flex items-center gap-1"
                           >
                             <ShieldCheck className="h-3 w-3" />
-                            Expertisée
+                            {t('Expertisée')}
                           </Badge>
                         )}
                         {car.is_professional && (
@@ -217,7 +221,7 @@ export function CarDetails() {
                             className="bg-blue-600 text-white font-medium flex items-center gap-1"
                           >
                             <Building2 className="h-3 w-3" />
-                            Pro
+                            {t('Pro')}
                           </Badge>
                         )}
                       </div>
@@ -228,7 +232,7 @@ export function CarDetails() {
                       </div>
                       {car.garantie && (
                         <div className="text-sm text-muted-foreground mt-1">
-                          Garantie
+                          {t('Garantie')}
                         </div>
                       )}
                     </div>
@@ -238,28 +242,28 @@ export function CarDetails() {
                     <div className="flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-4 rounded-xl bg-secondary/50">
                       <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                       <div className="text-xs sm:text-sm font-medium">{car.year}</div>
-                      <div className="text-[10px] sm:text-xs text-muted-foreground">Année</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">{t('Année')}</div>
                     </div>
                     <div className="flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-4 rounded-xl bg-secondary/50">
                       <Gauge className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                       <div className="text-xs sm:text-sm font-medium">
                         {car.mileage}
                       </div>
-                      <div className="text-[10px] sm:text-xs text-muted-foreground">Km</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">{t('Km')}</div>
                     </div>
                     <div className="flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-4 rounded-xl bg-secondary/50">
                       <Power className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                       <div className="text-xs sm:text-sm font-medium">
                         {car.puissance || "-"}
                       </div>
-                      <div className="text-[10px] sm:text-xs text-muted-foreground">ch</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">{t('ch')}</div>
                     </div>
                     <div className="flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-4 rounded-xl bg-secondary/50">
                       <Fuel className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                       <div className="text-xs sm:text-sm font-medium">
                         {car.carburant?.slice(0, 6) || "-"}
                       </div>
-                      <div className="text-[10px] sm:text-xs text-muted-foreground">Carburant</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">{t('Carburant')}</div>
                     </div>
                   </div>
                 </div>
@@ -269,7 +273,7 @@ export function CarDetails() {
                 <div className="space-y-4">
                   <h2 className="text-lg font-semibold flex items-center gap-2">
                     <Info className="h-5 w-5" />
-                    Description
+                    {t('Description')}
                   </h2>
                   <div className={cn(
                     "prose prose-neutral max-w-none",
@@ -286,7 +290,7 @@ export function CarDetails() {
                 <div className="space-y-4">
                   <h2 className="text-lg font-semibold flex items-center gap-2">
                     <Cog className="h-5 w-5" />
-                    Caractéristiques
+                    {t('Caractéristiques')}
                   </h2>
                   <div className={cn(
                     "grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6",
@@ -294,31 +298,31 @@ export function CarDetails() {
                   )}>
                     <div className="space-y-2 sm:space-y-3">
                       <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-muted-foreground">Transmission</span>
+                        <span className="text-muted-foreground">{t('Transmission')}</span>
                         <span className="font-medium truncate ml-2">{car.transmission || "-"}</span>
                       </div>
                       <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-muted-foreground">Places</span>
+                        <span className="text-muted-foreground">{t('Places')}</span>
                         <span className="font-medium truncate ml-2">{car.places || "-"}</span>
                       </div>
                       <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-muted-foreground">Portes</span>
+                        <span className="text-muted-foreground">{t('Portes')}</span>
                         <span className="font-medium truncate ml-2">{car.portes || "-"}</span>
                       </div>
                     </div>
                     <div className="space-y-2 sm:space-y-3">
                       <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-muted-foreground">Couleur</span>
+                        <span className="text-muted-foreground">{t('Couleur')}</span>
                         <span className="font-medium truncate ml-2">{car.couleur || "-"}</span>
                       </div>
                       <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-muted-foreground">Cylindrée</span>
+                        <span className="text-muted-foreground">{t('Cylindrée')}</span>
                         <span className="font-medium truncate ml-2">
                           {car.cylindree ? `${car.cylindree} cm³` : "-"}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-muted-foreground">Consommation</span>
+                        <span className="text-muted-foreground">{t('Consommation')}</span>
                         <span className="font-medium truncate ml-2">
                           {car.consommation ? `${car.consommation}L/100km` : "-"}
                         </span>
@@ -333,7 +337,7 @@ export function CarDetails() {
                     <div className="space-y-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <Cog className="h-5 w-5" />
-                        Options et équipements
+                        {t('Options et équipements')}
                       </h2>
                       <div className={cn(
                         "grid grid-cols-2 gap-3",
@@ -361,7 +365,7 @@ export function CarDetails() {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
                       <Building2 className="h-5 w-5 text-primary" />
-                      <h2 className="font-semibold">Professionnel</h2>
+                      <h2 className="font-semibold">{t('Professionnel')}</h2>
                     </div>
                     <div className="space-y-2">
                       <p className="text-lg font-medium">{car.company_name}</p>
@@ -383,7 +387,7 @@ export function CarDetails() {
                       disabled={!isAuthenticated}
                     >
                       <Phone className="h-4 w-4" />
-                      {showPhone && isAuthenticated ? car.phone_number : "Voir le numéro"}
+                      {showPhone && isAuthenticated ? car.phone_number : t('Voir le numéro')}
                     </Button>
                   )}
 
@@ -393,7 +397,7 @@ export function CarDetails() {
                     disabled={!isAuthenticated}
                   >
                     <MessageSquare className="h-4 w-4" />
-                    Envoyer un message
+                    {t('Envoyer un message')}
                   </Button>
                   
                   <ReportDialog 
@@ -409,7 +413,7 @@ export function CarDetails() {
                     <AuthDialog>
                       <Button variant="default" size="sm" className="w-full gap-2">
                         <Plus className="h-4 w-4" />
-                        Créer une annonce
+                        {t('Créer une annonce')}
                       </Button>
                     </AuthDialog>
                   </div>
@@ -418,19 +422,19 @@ export function CarDetails() {
                 <div className="text-sm text-muted-foreground space-y-2">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4" />
-                    <p>Ne payez jamais à l'avance</p>
+                    <p>{('Ne payez jamais à l\'avance')}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Shield className="h-4 w-4" />
-                    <p>Méfiez-vous des prix trop bas</p>
+                    <p>{t('Méfiez-vous des prix trop bas')}</p>
                   </div>
                 </div>
               </div>
 
               <div className="bg-white rounded-xl p-6 shadow-lg space-y-4">
-                <h2 className="font-semibold">Annonces similaires</h2>
+                <h2 className="font-semibold">{('Annonces similaires')}</h2>
                 <div className="text-sm text-muted-foreground text-center py-8">
-                  Fonctionnalité à venir
+                  {t('Fonctionnalité à venir')}
                 </div>
               </div>
             </div>
@@ -441,7 +445,7 @@ export function CarDetails() {
           <Sheet open={showPaywall} onOpenChange={setShowPaywall}>
             <SheetContent side="bottom" className="h-[90vh] sm:h-auto">
               <SheetHeader className="text-center mb-6">
-                <SheetTitle className="text-2xl">Accédez à toutes les informations</SheetTitle>
+                <SheetTitle className="text-2xl">{t('Accédez à toutes les informations')}</SheetTitle>
               </SheetHeader>
               <div className="space-y-6">
                 <div className="grid grid-cols-3 gap-4">
@@ -449,26 +453,26 @@ export function CarDetails() {
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                       <Shield className="h-6 w-6 text-primary" />
                     </div>
-                    <p className="text-sm font-medium">Vendeurs vérifiés</p>
+                    <p className="text-sm font-medium">{t('Vendeurs vérifiés')}</p>
                   </div>
                   <div className="text-center space-y-2">
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                       <MessageSquare className="h-6 w-6 text-primary" />
                     </div>
-                    <p className="text-sm font-medium">Contact direct</p>
+                    <p className="text-sm font-medium">{t('Contact direct')}</p>
                   </div>
                   <div className="text-center space-y-2">
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                       <Check className="h-6 w-6 text-primary" />
                     </div>
-                    <p className="text-sm font-medium">Détails complets</p>
+                    <p className="text-sm font-medium">{t('Détails complets')}</p>
                   </div>
                 </div>
 
                 <AuthDialog>
                   <Button className="w-full gap-2">
                     <Plus className="h-4 w-4" />
-                    Créer une annonce
+                    {t('Créer une annonce')}
                   </Button>
                 </AuthDialog>
 
@@ -476,7 +480,7 @@ export function CarDetails() {
                   onClick={skipPaywall}
                   className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Continuer sans compte
+                  {t('Continuer sans compte')}
                 </button>
               </div>
             </SheetContent>

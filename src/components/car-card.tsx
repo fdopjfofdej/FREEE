@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom"
-import { Car } from "@/types"
-import { formatCurrency, slugify } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
+// filepath: c:\Users\ericw\Desktop\freeauto.ch\src\components\car-card.tsx
+import { Link } from "react-router-dom";
+import { Car } from "@/types";
+import { formatCurrency, slugify } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { 
   Calendar,
   Gauge,
@@ -11,15 +12,17 @@ import {
   ShieldCheck,
   Award,
   ImageIcon
-} from "lucide-react"
-import { cn } from "@/lib/utils"
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useTranslation } from 'react-i18next';
 
 interface CarCardProps {
-  car: Car
+  car: Car;
 }
 
 export function CarCard({ car }: CarCardProps) {
-  const carSlug = slugify(`${car.brand}-${car.model}-${car.year}`)
+  const { t } = useTranslation();
+  const carSlug = slugify(`${car.brand}-${car.model}-${car.year}`);
   
   return (
     <Link to={`/annonce/${car.id}/${carSlug}`} className="block">
@@ -43,19 +46,19 @@ export function CarCard({ car }: CarCardProps) {
             {car.expertisee && (
               <Badge className="bg-emerald-600 text-black">
                 <ShieldCheck className="w-3 h-3 mr-1" />
-                Expertisée
+                {t('Expertisée')}
               </Badge>
             )}
             {car.is_professional && (
               <Badge className="bg-blue-600 text-white">
                 <Building2 className="w-3 h-3 mr-1" />
-                Pro
+                {t('Pro')}
               </Badge>
             )}
             {car.premiere_main && (
               <Badge className="bg-primary text-white">
                 <Award className="w-3 h-3 mr-1" />
-                1ère main
+                {t('1ère main')}
               </Badge>
             )}
           </div>
@@ -110,7 +113,7 @@ export function CarCard({ car }: CarCardProps) {
                 car.transmission === "Manuelle" && "bg-primary text-white"
               )}
             >
-              {car.transmission || "Non spécifié"}
+              {car.transmission || t("Non spécifié")}
             </Badge>
 
             {car.is_professional && car.company_name && (
@@ -123,5 +126,5 @@ export function CarCard({ car }: CarCardProps) {
         </div>
       </div>
     </Link>
-  )
+  );
 }

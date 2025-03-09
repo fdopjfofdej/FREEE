@@ -31,6 +31,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { Flag, Loader2, AlertTriangle } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 const reportSchema = z.object({
   reason: z.string({
@@ -51,12 +52,12 @@ interface ReportDialogProps {
 }
 
 const REPORT_REASONS = [
-  { value: "fraudulent", label: "Annonce frauduleuse" },
-  { value: "inappropriate", label: "Contenu inapproprié" },
-  { value: "misleading", label: "Information trompeuse" },
-  { value: "duplicate", label: "Annonce en double" },
-  { value: "spam", label: "Spam" },
-  { value: "other", label: "Autre raison" },
+  { value: "fraudulent", labelKey: "Annonce frauduleuse" },
+  { value: "inappropriate", labelKey: "Contenu inapproprié" },
+  { value: "misleading", labelKey: "Information trompeuse" },
+  { value: "duplicate", labelKey: "Annonce en double" },
+  { value: "spam", labelKey: "Spam" },
+  { value: "other", labelKey: "Autre raison" },
 ];
 
 export function ReportDialog({
@@ -66,6 +67,7 @@ export function ReportDialog({
   className,
   children,
 }: ReportDialogProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -91,8 +93,8 @@ export function ReportDialog({
       if (error) throw error;
 
       toast({
-        title: "Signalement envoyé",
-        description: "Merci pour votre signalement. Notre équipe va l'examiner.",
+        title: t("Signalement envoyé"),
+        description: t("Merci pour votre signalement. Notre équipe va l'examiner."),
       });
 
       setOpen(false);
@@ -100,8 +102,8 @@ export function ReportDialog({
     } catch (error: any) {
       console.error("Error reporting car:", error);
       toast({
-        title: "Erreur",
-        description: error.message || "Une erreur est survenue lors de l'envoi du signalement",
+        title: t("Erreur"),
+        description: error.message || t("Une erreur est survenue lors de l'envoi du signalement"),
         variant: "destructive",
       });
     } finally {
@@ -115,7 +117,7 @@ export function ReportDialog({
         {children || (
           <Button variant={variant} size={size} className={className}>
             <Flag className="h-4 w-4 mr-2" />
-            Signaler
+            {t("Signaler cette annonce")}
           </Button>
         )}
       </DialogTrigger>
@@ -123,10 +125,10 @@ export function ReportDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            Signaler cette annonce
+            {t("Signaler cette annonce")}
           </DialogTitle>
           <DialogDescription>
-            Aidez-nous à maintenir la qualité des annonces en signalant les contenus problématiques.
+            {t("Aidez-nous à maintenir la qualité des annonces en signalant les contenus problématiques.")}
           </DialogDescription>
         </DialogHeader>
 
@@ -137,17 +139,17 @@ export function ReportDialog({
               name="reason"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Raison du signalement</FormLabel>
+                  <FormLabel>{t('Raison du signalement')}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Sélectionnez une raison" />
+                        <SelectValue placeholder={t('Sélectionnez une raison')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {REPORT_REASONS.map((reason) => (
                         <SelectItem key={reason.value} value={reason.value}>
-                          {reason.label}
+                          {t(reason.labelKey)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -162,10 +164,10 @@ export function ReportDialog({
               name="details"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Détails (optionnel)</FormLabel>
+                  <FormLabel>{t('Détails (optionnel)')}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Décrivez le problème plus en détail..."
+                      placeholder={t('Décrivez le problème plus en détail...')}
                       className="resize-none"
                       {...field}
                     />
@@ -180,10 +182,10 @@ export function ReportDialog({
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Envoi en cours...
+                    {t('Envoi en cours...')}
                   </>
                 ) : (
-                  "Envoyer le signalement"
+                  t('Envoyer le signalement')
                 )}
               </Button>
             </DialogFooter>
