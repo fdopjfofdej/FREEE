@@ -19,7 +19,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { ImageUpload } from "@/components/image-upload"
 import { VehicleSearch } from "@/components/vehicle-search"
-import { CitySearch } from "@/components/city-search"
 import { Switch } from "@/components/ui/switch"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -31,7 +30,7 @@ import {
 } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/lib/supabase"
-import { TYPE_VEHICULES, CARBURANTS, TRANSMISSIONS, COULEURS, OPTIONS, CarQueryVehicle, CitySearchResult, Car } from "@/types"
+import { TYPE_VEHICULES, CARBURANTS, TRANSMISSIONS, COULEURS, OPTIONS, CarQueryVehicle, Car } from "@/types"
 import { Camera, FileText, Settings, Phone, Loader2, ArrowLeft } from "lucide-react"
 
 const carSchema = z.object({
@@ -39,34 +38,30 @@ const carSchema = z.object({
   brand: z.string().min(1, "La marque est requise"),
   model: z.string().min(1, "Le modèle est requis"),
   description: z.string().min(1, "La description est requise"),
-  price: z.string().min(1, "Le prix est requis").transform(Number).transform(String),
-  year: z.string()
-    .min(1, "L'année est requise")
-    .transform(Number)
-    .refine((val) => val >= 1900 && val <= new Date().getFullYear(), {
-      message: "L'année doit être valide"
-    })
-    .transform(String),
-  mileage: z.string().min(1, "Le kilométrage est requis").transform(Number).transform(String),
+  price: z.preprocess((val) => Number(val), z.number().min(1, "Le prix est requis")),
+  year: z.preprocess((val) => Number(val), z.number()
+    .min(1900, "L'année doit être valide")
+    .max(new Date().getFullYear(), "L'année doit être valide")),
+  mileage: z.preprocess((val) => Number(val), z.number().min(1, "Le kilométrage est requis")),
   type_vehicule: z.string().min(1, "Le type de véhicule est requis"),
   carburant: z.string().min(1, "Le type de carburant est requis"),
   transmission: z.string().min(1, "Le type de transmission est requis"),
   couleur: z.string().min(1, "La couleur est requise"),
-  puissance: z.string().transform(val => val ? Number(val) : undefined).transform(String),
-  cylindree: z.string().transform(val => val ? Number(val) : undefined).transform(String),
-  portes: z.string().transform(val => val ? Number(val) : undefined).transform(String),
-  places: z.string().transform(val => val ? Number(val) : undefined).transform(String),
-  consommation: z.string().transform(val => val ? Number(val) : undefined).transform(String),
-  garantie: z.string().transform(val => val ? Number(val) : undefined).transform(String),
+  puissance: z.preprocess((val) => Number(val), z.number().optional()),
+  cylindree: z.preprocess((val) => Number(val), z.number().optional()),
+  portes: z.preprocess((val) => Number(val), z.number().optional()),
+  places: z.preprocess((val) => Number(val), z.number().optional()),
+  consommation: z.preprocess((val) => Number(val), z.number().optional()),
+  garantie: z.boolean().optional(),
   options: z.array(z.string()).default([]),
-  premiere_main: z.boolean().default(false),
-  expertisee: z.boolean().default(false),
+  premiere_main: z.boolean().optional(),
+  expertisee: z.boolean().optional(),
   phone_number: z.string()
     .min(1, "Le numéro de téléphone est requis")
     .refine((val) => /^(\+41|0)[1-9][0-9]{8}$/.test(val), {
       message: "Format invalide (ex: 0791234567 ou +41791234567)"
     }),
-  is_professional: z.boolean().default(false),
+  is_professional: z.boolean().optional(),
   company_name: z.string().optional(),
   city: z.string().min(1, "La ville est requise"),
 }).transform((data) => ({
@@ -162,26 +157,26 @@ export default function CreateListing({ initialData }: CreateListingProps) {
       brand: initialData?.brand || "",
       model: initialData?.model || "",
       description: initialData?.description || "",
-      price: initialData?.price?.toString() || "",
-      year: initialData?.year?.toString() || "",
-      mileage: initialData?.mileage?.toString() || "",
+      price: initialData?.price || 0,
+      year: initialData?.year || 0,
+      mileage: initialData?.mileage || 0,
       images: initialData?.images || [],
       type_vehicule: initialData?.type_vehicule || "",
       carburant: initialData?.carburant || "",
       transmission: initialData?.transmission || "",
-      puissance: initialData?.puissance?.toString() || "",
-      cylindree: initialData?.cylindree?.toString() || "",
-      portes: initialData?.portes?.toString() || "",
-      places: initialData?.places?.toString() || "",
+      puissance: initialData?.puissance ?? undefined,
+      cylindree: initialData?.cylindree ?? undefined,
+      portes: initialData?.portes ?? undefined,
+      places: initialData?.places ?? undefined,
       couleur: initialData?.couleur || "",
       premiere_main: initialData?.premiere_main || false,
-      garantie: initialData?.garantie?.toString() || "",
+      garantie: initialData?.garantie ? true : false,
       options: initialData?.options || [],
       phone_number: initialData?.phone_number || "",
       expertisee: initialData?.expertisee || false,
       is_professional: initialData?.is_professional || false,
       company_name: initialData?.company_name || "",
-      consommation: initialData?.consommation?.toString() || "",
+      consommation: initialData?.consommation ?? undefined,
       city: initialData?.city || "",
     },
   })
@@ -233,11 +228,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
   const handleVehicleSelect = (vehicle: CarQueryVehicle) => {
     form.setValue("brand", vehicle.make_display)
     form.setValue("model", vehicle.model_name)
-    form.setValue("year", vehicle.model_year)
-  }
-
-  const handleCitySelect = (city: CitySearchResult) => {
-    form.setValue("city", city.display_name)
+    form.setValue("year", parseInt(vehicle.model_year))
   }
 
   const onSubmit = async (data: CarFormValues) => {
@@ -626,7 +617,6 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       control={form.control}
                       name="cylindree"
@@ -640,7 +630,6 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       control={form.control}
                       name="portes"
@@ -654,7 +643,6 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       control={form.control}
                       name="places"
@@ -668,7 +656,6 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       control={form.control}
                       name="consommation"
@@ -682,23 +669,30 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                         </FormItem>
                       )}
                     />
+                  </div>
 
+                  <div className="space-y-4">
                     <FormField
                       control={form.control}
                       name="garantie"
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Garantie (mois)</FormLabel>
+                        <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel>Garantie</FormLabel>
+                            <FormDescription>
+                              Proposez vous une garantie ?
+                            </FormDescription>
+                          </div>
                           <FormControl>
-                            <Input type="number" placeholder="12" {...field} />
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
                           </FormControl>
-                          <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </div>
 
-                  <div className="space-y-4">
                     <FormField
                       control={form.control}
                       name="premiere_main"
@@ -851,15 +845,29 @@ export default function CreateListing({ initialData }: CreateListingProps) {
                     )}
                   />
 
-                  <FormItem>
+                  <FormField
+                    control={form.control}
+                    name="city"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ville</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Strasbourg" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* <FormItem>
                     <FormLabel>Ville</FormLabel>
-                    <CitySearch
-                      onSelect={handleCitySelect}
+                    <input type="text"
+                      className="border-2 border-gray-300 p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="Rechercher une ville"
                       value={form.getValues("city")}
+                      onChange={(e) => form.setValue("city", e.target.value)}
                     />
                     <FormMessage />
-                  </FormItem>
+                  </FormItem> */}
                 </>
               )}
 

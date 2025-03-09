@@ -26,7 +26,7 @@ export function ImageUpload({ value = [], onChange, maxFiles = 5 }: ImageUploadP
         const fileName = `${Math.random()}.${fileExt}`
         const filePath = `${fileName}`
 
-        const { error: uploadError, data } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('car-images')
           .upload(filePath, file)
 

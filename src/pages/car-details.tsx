@@ -35,7 +35,6 @@ import {
   AlertTriangle,
   ArrowLeft,
   Plus,
-  Flag,
 } from "lucide-react"
 import {
   Carousel,
@@ -52,7 +51,7 @@ export function CarDetails() {
   const [loading, setLoading] = useState(true)
   const [showPhone, setShowPhone] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [currentImageIndex] = useState(0)
   const { showPaywall, setShowPaywall, skipPaywall } = useAuthPreference()
 
   useEffect(() => {
@@ -159,7 +158,7 @@ export function CarDetails() {
               <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                 {car.images.length > 0 ? (
                   <div className="relative">
-                    <Carousel className="w-full" onSelect={(index) => setCurrentImageIndex(index)}>
+                    <Carousel className="w-full">
                       <CarouselContent>
                         {car.images.map((image, index) => (
                           <CarouselItem key={index}>
@@ -229,7 +228,7 @@ export function CarDetails() {
                       </div>
                       {car.garantie && (
                         <div className="text-sm text-muted-foreground mt-1">
-                          Garantie {car.garantie} mois
+                          Garantie
                         </div>
                       )}
                     </div>

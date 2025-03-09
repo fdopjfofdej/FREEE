@@ -4,7 +4,7 @@ import { Car } from "@/types"
 import { supabase } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
-import { Loader2, ArrowLeft } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import CreateListing from "./create-listing"
 
 export default function EditListing() {
