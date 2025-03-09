@@ -31,7 +31,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { Flag, Loader2, AlertTriangle } from "lucide-react";
-import { AuthDialog } from "@/components/auth-dialog";
 
 const reportSchema = z.object({
   reason: z.string({
@@ -62,7 +61,6 @@ const REPORT_REASONS = [
 
 export function ReportDialog({
   carId,
-  isAuthenticated,
   variant = "ghost",
   size = "sm",
   className,
@@ -84,7 +82,7 @@ export function ReportDialog({
     try {
       setIsSubmitting(true);
 
-      const { data: reportId, error } = await supabase.rpc("report_car", {
+      const { error } = await supabase.rpc("report_car", {
         p_car_id: carId,
         p_reason: data.reason,
         p_details: data.details || null,

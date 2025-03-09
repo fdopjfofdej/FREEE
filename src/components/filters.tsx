@@ -13,7 +13,7 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet"
-import { SlidersHorizontal, X, MapPin, Euro, Calendar, Gauge, Power, Car, Paintbrush, Search, ChevronRight } from "lucide-react"
+import { SlidersHorizontal, X, MapPin, Euro, Calendar, Gauge, Power, Car, Paintbrush, Search } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -89,7 +89,7 @@ export function Filters({ onFilterChange }: FiltersProps) {
           </span>
           {getActiveFilterCount() > 0 && (
             <Badge 
-              variant="primary" 
+              variant="default" 
               className="absolute -top-2 -right-2 h-5 min-w-[20px] px-1"
             >
               {getActiveFilterCount()}

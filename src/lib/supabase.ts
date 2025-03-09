@@ -1,15 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
-import { RetryOptions } from '@supabase/gotrue-js';
+// Removed RetryOptions import as it does not exist in '@supabase/gotrue-js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-// Configure retry options
-const retryOptions: RetryOptions = {
-  retryAttempts: 5,
-  retryInterval: 1500, // Start with 1.5 seconds
-  exponentialBackoff: true, // Each retry will wait exponentially longer
-}
 
 // Create Supabase client with retry configuration
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
@@ -18,7 +11,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
-    retryOptions,
   },
   global: {
     headers: {

@@ -51,10 +51,17 @@ export default function Home({ user }: HomeProps) {
 
       // Apply text search if searchTerms is provided
       if (filters.searchTerms) {
-        query = query.textSearch('full_search', filters.searchTerms, {
-          type: 'websearch',
-          config: 'french'
-        })
+        if (Array.isArray(filters.searchTerms)) {
+          query = query.textSearch('full_search', filters.searchTerms.join(' '), {
+            type: 'websearch',
+            config: 'french'
+          })
+        } else {
+          query = query.textSearch('full_search', filters.searchTerms, {
+            type: 'websearch',
+            config: 'french'
+          })
+        }
       }
 
       // Apply other filters

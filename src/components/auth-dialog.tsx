@@ -17,7 +17,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -32,7 +31,6 @@ import {
   AlertTriangle,
   Mail,
 } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
 
 const signUpSchema = z
   .object({

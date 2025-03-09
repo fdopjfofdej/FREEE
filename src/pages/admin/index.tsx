@@ -785,7 +785,7 @@ export default function AdminPanel() {
                                 report.status === 'pending'
                                   ? 'default'
                                   : report.status === 'resolved'
-                                  ? 'success'
+                                  ? 'outline'
                                   : 'secondary'
                               }
                             >
