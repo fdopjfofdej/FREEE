@@ -552,6 +552,10 @@ const resources = {
       "Format invalide (ex: 0791234567 ou +41791234567)":
         "Format invalide (ex: 0791234567 ou +41791234567)",
       "La ville est requise": "La ville est requise",
+      "Page non trouvée": "Page non trouvée",
+      "Cette page n'existe pas ou a été déplacée.":
+        "Cette page n'existe pas ou a été déplacée.",
+      "Retour à l'accueil": "Retour à l'accueil",
     },
   },
   de: {
@@ -562,6 +566,10 @@ const resources = {
       "Complete Details": "Vollständige Details",
       "Sign Up": "Anmeldung",
       "Sign In": "Einloggen",
+      "Page non trouvée": "Seite nicht gefunden",
+      "Cette page n'existe pas ou a été déplacée.":
+        "Diese Seite existiert nicht oder wurde verschoben.",
+      "Retour à l'accueil": "Zurück zur Startseite",
       Email: "Email",
       Password: "Passwort",
       "Confirm Password": "Passwort bestätigen",
