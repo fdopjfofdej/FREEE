@@ -9,6 +9,7 @@ import { MyListings } from "@/pages/my-listings";
 import CreateListing from "@/pages/create-listing";
 import EditListing from "@/pages/edit-listing";
 import AdminPanel from "@/pages/admin";
+import { NotFound } from "./pages/not-found";
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -76,6 +77,8 @@ export default function App() {
         <Route path="/en/create-ad" element={<CreateListing />} />
         <Route path="/en/modifier-annonce/:id" element={<EditListing />} />
         <Route path="/en/dashboard" element={<AdminPanel />} />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
     </>
