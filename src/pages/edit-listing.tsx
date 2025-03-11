@@ -42,7 +42,7 @@ export default function EditListing() {
           description: "Cette annonce n'existe pas ou a été supprimée",
           variant: "destructive",
         })
-        navigate('/mes-annonces')
+        navigate('/my-ads')
         return
       }
 
@@ -53,7 +53,7 @@ export default function EditListing() {
           description: "Vous n'êtes pas autorisé à modifier cette annonce",
           variant: "destructive",
         })
-        navigate('/mes-annonces')
+        navigate('/my-ads')
         return
       }
 
@@ -86,7 +86,7 @@ export default function EditListing() {
           <h1 className="text-2xl font-bold text-gray-900">Accès refusé</h1>
           <p className="mt-2 text-gray-600">Vous n'êtes pas autorisé à modifier cette annonce.</p>
           <Button asChild className="mt-4">
-            <Link to={useRedirectToLanguagePath("/mes-annonces")}>Retour à mes annonces</Link>
+            <Link to={useRedirectToLanguagePath("/my-ads")}>Retour à mes annonces</Link>
           </Button>
         </div>
       </div>

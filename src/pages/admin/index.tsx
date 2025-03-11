@@ -659,7 +659,7 @@ export default function AdminPanel() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => navigate(`/annonce/${car.id}`)}
+                              onClick={() => navigate(`/ads/${car.id}`)}
                             >
                               Voir
                             </Button>
@@ -750,7 +750,7 @@ export default function AdminPanel() {
                                   variant="link" 
                                   size="sm" 
                                   className="p-0 h-auto justify-start text-xs text-muted-foreground"
-                                  onClick={() => window.open(`/annonce/${car.id}`, '_blank')}
+                                  onClick={() => window.open(`/ads/${car.id}`, '_blank')}
                                 >
                                   Voir l'annonce <ExternalLink className="h-3 w-3 ml-1" />
                                 </Button>

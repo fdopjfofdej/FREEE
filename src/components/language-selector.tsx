@@ -8,6 +8,16 @@ export function LanguageSelector() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  if (window.location.pathname.includes("/de")) {
+    localStorage.setItem("selectedLanguage", "de");
+  } else if (window.location.pathname.includes("/fr")) {
+    localStorage.setItem("selectedLanguage", "fr");
+  } else if (window.location.pathname.includes("/en")) {
+    localStorage.setItem("selectedLanguage", "en");
+  } else if (window.location.pathname === "/") {
+    localStorage.setItem("selectedLanguage", "fr");
+  }
+
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
     localStorage.setItem("selectedLanguage", lng);

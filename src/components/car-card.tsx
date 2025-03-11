@@ -25,7 +25,7 @@ export function CarCard({ car }: CarCardProps) {
   // const carSlug = slugify(`${car.brand}-${car.model}-${car.year}`);
   
   return (
-    <Link to={useRedirectToLanguagePath(`/annonce/${car.slug}`)} className="block">
+    <Link to={useRedirectToLanguagePath(`/ads/${car.slug}`)} className="block">
       <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
         {/* Image Section */}
         <div className="relative aspect-[16/10]">

@@ -55,27 +55,27 @@ export default function App() {
 
         {/* French Routes */}
         <Route path="/fr" element={<Home user={user} />} />
-        <Route path="/fr/annonce/:slug" element={<CarDetails />} />
-        <Route path="/fr/mes-annonces" element={<MyListings />} />
-        <Route path="/fr/creer-annonce" element={<CreateListing />} />
+        <Route path="/fr/ads/:slug" element={<CarDetails />} />
+        <Route path="/fr/my-ads" element={<MyListings />} />
+        <Route path="/fr/create-ad" element={<CreateListing />} />
         <Route path="/fr/modifier-annonce/:id" element={<EditListing />} />
-        <Route path="/fr/admin" element={<AdminPanel />} />
+        <Route path="/fr/dashboard" element={<AdminPanel />} />
 
         {/* German Routes */}
         <Route path="/de" element={<Home user={user} />} />
-        <Route path="/de/annonce/:slug" element={<CarDetails />} />
-        <Route path="/de/mes-annonces" element={<MyListings />} />
-        <Route path="/de/creer-annonce" element={<CreateListing />} />
+        <Route path="/de/ads/:slug" element={<CarDetails />} />
+        <Route path="/de/my-ads" element={<MyListings />} />
+        <Route path="/de/create-ad" element={<CreateListing />} />
         <Route path="/de/modifier-annonce/:id" element={<EditListing />} />
-        <Route path="/de/admin" element={<AdminPanel />} />
+        <Route path="/de/dashboard" element={<AdminPanel />} />
 
         {/* English Routes */}
         <Route path="/en" element={<Home user={user} />} />
-        <Route path="/en/annonce/:slug" element={<CarDetails />} />
-        <Route path="/en/mes-annonces" element={<MyListings />} />
-        <Route path="/en/creer-annonce" element={<CreateListing />} />
+        <Route path="/en/ads/:slug" element={<CarDetails />} />
+        <Route path="/en/my-ads" element={<MyListings />} />
+        <Route path="/en/create-ad" element={<CreateListing />} />
         <Route path="/en/modifier-annonce/:id" element={<EditListing />} />
-        <Route path="/en/admin" element={<AdminPanel />} />
+        <Route path="/en/dashboard" element={<AdminPanel />} />
       </Routes>
       <Toaster />
     </>

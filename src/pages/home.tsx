@@ -198,18 +198,18 @@ export default function Home({ user }: HomeProps) {
                 {user ? (
                   <>
                     <Button asChild variant="ghost">
-                      <Link to={useRedirectToLanguagePath("/mes-annonces")}>{t("Mes annonces")}</Link>
+                      <Link to={useRedirectToLanguagePath("/my-ads")}>{t("Mes annonces")}</Link>
                     </Button>
                     {isAdmin && (
                       <Button asChild variant="ghost" className="gap-2">
-                        <Link to={useRedirectToLanguagePath("/admin")}>
+                        <Link to={useRedirectToLanguagePath("/dashboard")}>
                           <Shield className="h-4 w-4" />
                           {t("Administration")}
                         </Link>
                       </Button>
                     )}
                     <Button asChild>
-                      <Link to={useRedirectToLanguagePath("/creer-annonce")} className="gap-2">
+                      <Link to={useRedirectToLanguagePath("/create-ad")} className="gap-2">
                         <Plus className="h-4 w-4" />
                         <span className="hidden sm:inline">
                           {t("Créer une annonce")}
@@ -281,7 +281,7 @@ export default function Home({ user }: HomeProps) {
               </p>
               {user ? (
                 <Button asChild>
-                  <Link to={useRedirectToLanguagePath("/creer-annonce")} className="gap-2">
+                  <Link to={useRedirectToLanguagePath("/create-ad")} className="gap-2">
                     <Plus className="h-4 w-4" />
                     {t("Publier une annonce")}
                   </Link>

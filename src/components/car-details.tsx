@@ -109,7 +109,7 @@ export function CarDetails() {
       // Redirect to the canonical URL if the slug is missing or incorrect
       if (data && !slug) {
         const correctSlug = slugify(`${data.brand}-${data.model}-${data.year}`)
-        navigate(useRedirectToLanguagePath(`/annonce/${data.id}/${correctSlug}`), { replace: true })
+        navigate(useRedirectToLanguagePath(`/ads/${data.id}/${correctSlug}`), { replace: true })
       }
     } catch (error) {
       console.error("Error fetching car:", error)
@@ -215,7 +215,7 @@ export function CarDetails() {
   };
 
   // Generate canonical URL
-  const canonicalUrl = `${window.location.origin}/annonce/${car.id}/${slugify(`${car.brand}-${car.model}-${car.year}`)}`;
+  const canonicalUrl = `${window.location.origin}/ads/${car.id}/${slugify(`${car.brand}-${car.model}-${car.year}`)}`;
   
   // Generate meta description
   const metaDescription = generateMetaDescription(car);

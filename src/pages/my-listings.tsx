@@ -125,7 +125,7 @@ export function MyListings() {
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-2xl font-bold">{t("Mes annonces")}</h1>
             <Button asChild>
-              <Link to={useRedirectToLanguagePath("/creer-annonce")}>{t("Créer une annonce")}</Link>
+              <Link to={useRedirectToLanguagePath("/create-ad")}>{t("Créer une annonce")}</Link>
             </Button>
           </div>
 
@@ -194,7 +194,7 @@ export function MyListings() {
                 {t("Vous n'avez pas encore publié d'annonces")}
               </p>
               <Button asChild>
-                <Link to={useRedirectToLanguagePath("/creer-annonce")}>{t("Publier une annonce")}</Link>
+                <Link to={useRedirectToLanguagePath("/create-ad")}>{t("Publier une annonce")}</Link>
               </Button>
             </div>
           )}

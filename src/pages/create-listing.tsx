@@ -315,7 +315,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
         });
       }
 
-      navigate(useRedirectToLanguagePath("/mes-annonces"));
+      navigate(useRedirectToLanguagePath("/my-ads"));
     } catch (error: any) {
       toast({
         title: "Erreur",
@@ -349,7 +349,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
             <LanguageSelector />
             <Button
               variant="ghost"
-              onClick={() => navigate(useRedirectToLanguagePath("/mes-annonces"))}
+              onClick={() => navigate(useRedirectToLanguagePath("/my-ads"))}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
