@@ -14,7 +14,7 @@ const Car: React.FC = () => {
         <div className="smoke"></div>
         <div className="smoke smoke-2"></div>
       </div>
-      <style jsx>{`
+      <style>{`
         .car-animation-container {
           position: relative;
           height: 100px;

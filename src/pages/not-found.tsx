@@ -8,7 +8,7 @@ import Car from "@/components/ui/car";
 export function NotFound() {
   const { t, i18n } = useTranslation();
   const location = useLocation();
-  const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
+  const [, setCurrentLanguage] = useState(i18n.language);
   const [homeLink, setHomeLink] = useState("/");
 
   // Extract language from URL path
