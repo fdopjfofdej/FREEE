@@ -1,7 +1,7 @@
 // filepath: c:\Users\ericw\Desktop\freeauto.ch\src\components\car-card.tsx
 import { Link } from "react-router-dom";
 import { Car } from "@/types";
-import { formatCurrency, slugify } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { 
   Calendar,
@@ -22,10 +22,10 @@ interface CarCardProps {
 
 export function CarCard({ car }: CarCardProps) {
   const { t } = useTranslation();
-  const carSlug = slugify(`${car.brand}-${car.model}-${car.year}`);
+  // const carSlug = slugify(`${car.brand}-${car.model}-${car.year}`);
   
   return (
-    <Link to={`/annonce/${car.id}/${carSlug}`} className="block">
+    <Link to={`/annonce/${car.slug}`} className="block">
       <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
         {/* Image Section */}
         <div className="relative aspect-[16/10]">

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
-import { cn } from "@/lib/utils";
+import { cn, slugify } from "@/lib/utils";
 import {
   Form,
   FormControl,
@@ -289,13 +289,8 @@ export default function CreateListing({ initialData }: CreateListingProps) {
           description: "Votre annonce a été modifiée avec succès",
         });
       } else {
-        // Génération de slug pour la création
-        const brandSlug = data.brand
-          .toLowerCase()
-          .replace(/\s+/g, "-")
-          .substring(0, 10);
-        const randomPart = Math.random().toString(36).substring(2, 7);
-        const slug = `${brandSlug}-${randomPart}`;
+        const randomNumber = Math.floor(Math.random() * 10000).toString().padStart(4, "0");
+        const slug = slugify(`${data.brand}-${data.model}-${data.year}-${randomNumber}`);
 
         // Création
         const { error } = await supabase.from("cars").insert({

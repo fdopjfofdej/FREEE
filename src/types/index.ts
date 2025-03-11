@@ -28,6 +28,7 @@ export interface Car {
   consommation?: number;
   location?: string;
   city?: string;
+  slug?: string;
 }
 
 export interface CarFilter {
