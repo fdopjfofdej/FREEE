@@ -5,4 +5,14 @@
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+  <url>
+    <loc>https://freeauto.ch/annonce/90888136-24ea-468c-9839-b04abced89d3</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://freeauto.ch/annonce/1c8b282c-8ae4-4748-9ab0-2b4065b34c1d</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
