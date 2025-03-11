@@ -24,20 +24,16 @@ export function LanguageSelector() {
   }, [i18n]);
 
   return (
-    <div className="flex items-center justify-center space-x-2 p-2 bg-gray-100 rounded-full shadow-md w-fit mx-auto">
-      {["fr", "en", "de"].map((lng) => (
-        <button
-          key={lng}
-          onClick={() => changeLanguage(lng)}
-          className={`px-5 py-2 text-sm font-semibold rounded-full transition duration-300 border 
-                     ${currentLanguage === lng 
-                       ? "bg-blue-600 text-white border-blue-600 shadow-md" 
-                       : "bg-white text-gray-700 border-gray-300 hover:bg-gray-200"}
-                     focus:outline-none focus:ring-2 focus:ring-blue-400`}
-        >
-          {lng.toUpperCase()}
-        </button>
-      ))}
+    <div className="flex items-center justify-center p-2">
+      <select
+        value={currentLanguage}
+        onChange={(e) => changeLanguage(e.target.value)}
+        className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
+        <option value="fr">FR</option>
+        <option value="en">EN</option>
+        <option value="de">DE</option>
+      </select>
     </div>
   );
 }
