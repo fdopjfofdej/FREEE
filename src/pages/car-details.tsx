@@ -1,21 +1,21 @@
-import { useEffect, useState } from "react"
-import { useParams, Link } from "react-router-dom"
-import { Helmet } from "react-helmet-async"
-import { Car } from "@/types"
-import { supabase } from "@/lib/supabase"
-import { formatCurrency } from "@/lib/utils"
-import { AuthDialog } from "@/components/auth-dialog"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { useAuthPreference } from "@/hooks/use-auth-preference"
-import { ReportDialog } from "@/components/report-dialog"
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import { Car } from "@/types";
+import { supabase } from "@/lib/supabase";
+import { formatCurrency } from "@/lib/utils";
+import { AuthDialog } from "@/components/auth-dialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { useAuthPreference } from "@/hooks/use-auth-preference";
+import { ReportDialog } from "@/components/report-dialog";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet"
+} from "@/components/ui/sheet";
 import {
   CarFront,
   Calendar,
@@ -35,65 +35,67 @@ import {
   AlertTriangle,
   ArrowLeft,
   Plus,
-} from "lucide-react"
+} from "lucide-react";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"
-import { cn } from "@/lib/utils"
-import { LanguageSelector } from '@/components/language-selector'
-import { useTranslation } from 'react-i18next'
+} from "@/components/ui/carousel";
+import { cn } from "@/lib/utils";
+import { LanguageSelector } from "@/components/language-selector";
+import { useTranslation } from "react-i18next";
 
 export function CarDetails() {
-  const { t } = useTranslation()
-  const { id } = useParams()
-  const [car, setCar] = useState<Car | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [showPhone, setShowPhone] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [currentImageIndex] = useState(0)
-  const { showPaywall, setShowPaywall, skipPaywall } = useAuthPreference()
+  const { t } = useTranslation();
+  const { slug } = useParams();
+  const [car, setCar] = useState<Car | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [showPhone, setShowPhone] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentImageIndex] = useState(0);
+  const { showPaywall, setShowPaywall, skipPaywall } = useAuthPreference();
 
   useEffect(() => {
-    fetchCar()
-    checkAuth()
-  }, [id])
+    fetchCar();
+    checkAuth();
+  }, [slug]);
 
   useEffect(() => {
     if (!isAuthenticated) {
-      setShowPaywall(true)
+      setShowPaywall(true);
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated]);
 
   const fetchCar = async () => {
     try {
       const { data, error } = await supabase
         .from("cars")
         .select("*")
-        .eq("id", id)
-        .single()
+        .eq("slug", slug)
+        .single();
 
-      if (error) throw error
-      setCar(data)
+      if (error) throw error;
+      setCar(data);
     } catch (error) {
-      console.error("Error fetching car:", error)
+      console.error("Error fetching car:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const checkAuth = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    setIsAuthenticated(!!user)
-  }
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    setIsAuthenticated(!!user);
+  };
 
   const handlePhoneClick = async () => {
-    if (!isAuthenticated) return
-    setShowPhone(true)
-  }
+    if (!isAuthenticated) return;
+    setShowPhone(true);
+  };
 
   if (loading) {
     return (
@@ -107,21 +109,25 @@ export function CarDetails() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (!car) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">{t('Annonce introuvable')}</h1>
-          <p className="mt-2 text-gray-600">{t('Cette annonce n\'existe plus ou a été supprimée.')}</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {t("Annonce introuvable")}
+          </h1>
+          <p className="mt-2 text-gray-600">
+            {t("Cette annonce n'existe plus ou a été supprimée.")}
+          </p>
           <Button asChild className="mt-4">
-            <Link to="/">{t('Retour aux annonces')}</Link>
+            <Link to="/">{t("Retour aux annonces")}</Link>
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -136,7 +142,10 @@ export function CarDetails() {
           <div className="container mx-auto">
             <div className="h-16 flex items-center justify-between px-4">
               <div className="flex items-center gap-4">
-                <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+                <Link
+                  to="/"
+                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+                >
                   <ArrowLeft className="h-4 w-4" />
                 </Link>
               </div>
@@ -147,7 +156,7 @@ export function CarDetails() {
                   <AuthDialog>
                     <Button size="sm" className="gap-2">
                       <Plus className="h-4 w-4" />
-                      <span>{t('Créer une annonce')}</span>
+                      <span>{t("Créer une annonce")}</span>
                     </Button>
                   </AuthDialog>
                 )}
@@ -198,30 +207,26 @@ export function CarDetails() {
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                     <div className="space-y-2">
-                      <h1 className="text-xl sm:text-2xl font-bold break-words">{car.title}</h1>
+                      <h1 className="text-xl sm:text-2xl font-bold break-words">
+                        {car.title}
+                      </h1>
                       <div className="flex flex-wrap gap-2">
                         {car.premiere_main && (
-                          <Badge 
-                            className="bg-primary text-white font-medium flex items-center gap-1"
-                          >
+                          <Badge className="bg-primary text-white font-medium flex items-center gap-1">
                             <Award className="h-3 w-3" />
-                            {t('1ère main')}
+                            {t("1ère main")}
                           </Badge>
                         )}
                         {car.expertisee && (
-                          <Badge 
-                            className="bg-green-600 text-white font-medium flex items-center gap-1"
-                          >
+                          <Badge className="bg-green-600 text-white font-medium flex items-center gap-1">
                             <ShieldCheck className="h-3 w-3" />
-                            {t('Expertisée')}
+                            {t("Expertisée")}
                           </Badge>
                         )}
                         {car.is_professional && (
-                          <Badge 
-                            className="bg-blue-600 text-white font-medium flex items-center gap-1"
-                          >
+                          <Badge className="bg-blue-600 text-white font-medium flex items-center gap-1">
                             <Building2 className="h-3 w-3" />
-                            {t('Pro')}
+                            {t("Pro")}
                           </Badge>
                         )}
                       </div>
@@ -232,7 +237,7 @@ export function CarDetails() {
                       </div>
                       {car.garantie && (
                         <div className="text-sm text-muted-foreground mt-1">
-                          {t('Garantie')}
+                          {t("Garantie")}
                         </div>
                       )}
                     </div>
@@ -241,29 +246,39 @@ export function CarDetails() {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
                     <div className="flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-4 rounded-xl bg-secondary/50">
                       <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                      <div className="text-xs sm:text-sm font-medium">{car.year}</div>
-                      <div className="text-[10px] sm:text-xs text-muted-foreground">{t('Année')}</div>
+                      <div className="text-xs sm:text-sm font-medium">
+                        {car.year}
+                      </div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">
+                        {t("Année")}
+                      </div>
                     </div>
                     <div className="flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-4 rounded-xl bg-secondary/50">
                       <Gauge className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                       <div className="text-xs sm:text-sm font-medium">
                         {car.mileage}
                       </div>
-                      <div className="text-[10px] sm:text-xs text-muted-foreground">{t('Km')}</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">
+                        {t("Km")}
+                      </div>
                     </div>
                     <div className="flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-4 rounded-xl bg-secondary/50">
                       <Power className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                       <div className="text-xs sm:text-sm font-medium">
                         {car.puissance || "-"}
                       </div>
-                      <div className="text-[10px] sm:text-xs text-muted-foreground">{t('ch')}</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">
+                        {t("ch")}
+                      </div>
                     </div>
                     <div className="flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-4 rounded-xl bg-secondary/50">
                       <Fuel className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                       <div className="text-xs sm:text-sm font-medium">
                         {car.carburant?.slice(0, 6) || "-"}
                       </div>
-                      <div className="text-[10px] sm:text-xs text-muted-foreground">{t('Carburant')}</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">
+                        {t("Carburant")}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -273,14 +288,16 @@ export function CarDetails() {
                 <div className="space-y-4">
                   <h2 className="text-lg font-semibold flex items-center gap-2">
                     <Info className="h-5 w-5" />
-                    {t('Description')}
+                    {t("Description")}
                   </h2>
-                  <div className={cn(
-                    "prose prose-neutral max-w-none",
-                    !isAuthenticated && "blur-content"
-                  )}>
+                  <div
+                    className={cn(
+                      "prose prose-neutral max-w-none",
+                      !isAuthenticated && "blur-content"
+                    )}
+                  >
                     <p className="text-muted-foreground whitespace-pre-line">
-                      {car.description || t('Aucune description fournie')}
+                      {car.description || t("Aucune description fournie")}
                     </p>
                   </div>
                 </div>
@@ -290,41 +307,65 @@ export function CarDetails() {
                 <div className="space-y-4">
                   <h2 className="text-lg font-semibold flex items-center gap-2">
                     <Cog className="h-5 w-5" />
-                    {t('Caractéristiques')}
+                    {t("Caractéristiques")}
                   </h2>
-                  <div className={cn(
-                    "grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6",
-                    !isAuthenticated && "blur-content"
-                  )}>
+                  <div
+                    className={cn(
+                      "grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6",
+                      !isAuthenticated && "blur-content"
+                    )}
+                  >
                     <div className="space-y-2 sm:space-y-3">
                       <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-muted-foreground">{t('Transmission')}</span>
-                        <span className="font-medium truncate ml-2">{t(car.transmission || "-")}</span>
+                        <span className="text-muted-foreground">
+                          {t("Transmission")}
+                        </span>
+                        <span className="font-medium truncate ml-2">
+                          {t(car.transmission || "-")}
+                        </span>
                       </div>
                       <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-muted-foreground">{t('Places')}</span>
-                        <span className="font-medium truncate ml-2">{car.places || "-"}</span>
+                        <span className="text-muted-foreground">
+                          {t("Places")}
+                        </span>
+                        <span className="font-medium truncate ml-2">
+                          {car.places || "-"}
+                        </span>
                       </div>
                       <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-muted-foreground">{t('Portes')}</span>
-                        <span className="font-medium truncate ml-2">{car.portes || "-"}</span>
+                        <span className="text-muted-foreground">
+                          {t("Portes")}
+                        </span>
+                        <span className="font-medium truncate ml-2">
+                          {car.portes || "-"}
+                        </span>
                       </div>
                     </div>
                     <div className="space-y-2 sm:space-y-3">
                       <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-muted-foreground">{t('Couleur')}</span>
-                        <span className="font-medium truncate ml-2">{t(car.couleur || "-")}</span>
+                        <span className="text-muted-foreground">
+                          {t("Couleur")}
+                        </span>
+                        <span className="font-medium truncate ml-2">
+                          {t(car.couleur || "-")}
+                        </span>
                       </div>
                       <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-muted-foreground">{t('Cylindrée')}</span>
+                        <span className="text-muted-foreground">
+                          {t("Cylindrée")}
+                        </span>
                         <span className="font-medium truncate ml-2">
                           {car.cylindree ? `${car.cylindree} cm³` : "-"}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-muted-foreground">{t('Consommation')}</span>
+                        <span className="text-muted-foreground">
+                          {t("Consommation")}
+                        </span>
                         <span className="font-medium truncate ml-2">
-                          {car.consommation ? `${car.consommation}L/100km` : "-"}
+                          {car.consommation
+                            ? `${car.consommation}L/100km`
+                            : "-"}
                         </span>
                       </div>
                     </div>
@@ -337,12 +378,14 @@ export function CarDetails() {
                     <div className="space-y-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <Cog className="h-5 w-5" />
-                        {t('Options et équipements')}
+                        {t("Options et équipements")}
                       </h2>
-                      <div className={cn(
-                        "grid grid-cols-2 gap-3",
-                        !isAuthenticated && "blur-content"
-                      )}>
+                      <div
+                        className={cn(
+                          "grid grid-cols-2 gap-3",
+                          !isAuthenticated && "blur-content"
+                        )}
+                      >
                         {car.options.map((option) => (
                           <div
                             key={option}
@@ -365,7 +408,7 @@ export function CarDetails() {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
                       <Building2 className="h-5 w-5 text-primary" />
-                      <h2 className="font-semibold">{t('Professionnel')}</h2>
+                      <h2 className="font-semibold">{t("Professionnel")}</h2>
                     </div>
                     <div className="space-y-2">
                       <p className="text-lg font-medium">{car.company_name}</p>
@@ -387,7 +430,9 @@ export function CarDetails() {
                       disabled={!isAuthenticated}
                     >
                       <Phone className="h-4 w-4" />
-                      {showPhone && isAuthenticated ? car.phone_number : t('Voir le numéro')}
+                      {showPhone && isAuthenticated
+                        ? car.phone_number
+                        : t("Voir le numéro")}
                     </Button>
                   )}
 
@@ -397,11 +442,11 @@ export function CarDetails() {
                     disabled={!isAuthenticated}
                   >
                     <MessageSquare className="h-4 w-4" />
-                    {t('Envoyer un message')}
+                    {t("Envoyer un message")}
                   </Button>
-                  
-                  <ReportDialog 
-                    carId={car.id} 
+
+                  <ReportDialog
+                    carId={car.id}
                     isAuthenticated={isAuthenticated}
                     variant="ghost"
                     className="w-full justify-start text-muted-foreground hover:text-destructive"
@@ -411,9 +456,13 @@ export function CarDetails() {
                 {!isAuthenticated && (
                   <div className="text-sm text-center">
                     <AuthDialog>
-                      <Button variant="default" size="sm" className="w-full gap-2">
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="w-full gap-2"
+                      >
                         <Plus className="h-4 w-4" />
-                        {t('Créer une annonce')}
+                        {t("Créer une annonce")}
                       </Button>
                     </AuthDialog>
                   </div>
@@ -426,15 +475,15 @@ export function CarDetails() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Shield className="h-4 w-4" />
-                    <p>{t('Méfiez-vous des prix trop bas')}</p>
+                    <p>{t("Méfiez-vous des prix trop bas")}</p>
                   </div>
                 </div>
               </div>
 
               <div className="bg-white rounded-xl p-6 shadow-lg space-y-4">
-                <h2 className="font-semibold">{('Annonces similaires')}</h2>
+                <h2 className="font-semibold">{"Annonces similaires"}</h2>
                 <div className="text-sm text-muted-foreground text-center py-8">
-                  {t('Fonctionnalité à venir')}
+                  {t("Fonctionnalité à venir")}
                 </div>
               </div>
             </div>
@@ -445,7 +494,9 @@ export function CarDetails() {
           <Sheet open={showPaywall} onOpenChange={setShowPaywall}>
             <SheetContent side="bottom" className="h-[90vh] sm:h-auto">
               <SheetHeader className="text-center mb-6">
-                <SheetTitle className="text-2xl">{t('Accédez à toutes les informations')}</SheetTitle>
+                <SheetTitle className="text-2xl">
+                  {t("Accédez à toutes les informations")}
+                </SheetTitle>
               </SheetHeader>
               <div className="space-y-6">
                 <div className="grid grid-cols-3 gap-4">
@@ -453,26 +504,30 @@ export function CarDetails() {
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                       <Shield className="h-6 w-6 text-primary" />
                     </div>
-                    <p className="text-sm font-medium">{t('Vendeurs vérifiés')}</p>
+                    <p className="text-sm font-medium">
+                      {t("Vendeurs vérifiés")}
+                    </p>
                   </div>
                   <div className="text-center space-y-2">
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                       <MessageSquare className="h-6 w-6 text-primary" />
                     </div>
-                    <p className="text-sm font-medium">{t('Contact direct')}</p>
+                    <p className="text-sm font-medium">{t("Contact direct")}</p>
                   </div>
                   <div className="text-center space-y-2">
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                       <Check className="h-6 w-6 text-primary" />
                     </div>
-                    <p className="text-sm font-medium">{t('Détails complets')}</p>
+                    <p className="text-sm font-medium">
+                      {t("Détails complets")}
+                    </p>
                   </div>
                 </div>
 
                 <AuthDialog>
                   <Button className="w-full gap-2">
                     <Plus className="h-4 w-4" />
-                    {t('Créer une annonce')}
+                    {t("Créer une annonce")}
                   </Button>
                 </AuthDialog>
 
@@ -480,7 +535,7 @@ export function CarDetails() {
                   onClick={skipPaywall}
                   className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {t('Continuer sans compte')}
+                  {t("Continuer sans compte")}
                 </button>
               </div>
             </SheetContent>
@@ -488,5 +543,5 @@ export function CarDetails() {
         )}
       </div>
     </>
-  )
+  );
 }

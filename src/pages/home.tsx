@@ -1,164 +1,185 @@
 // filepath: c:\Users\ericw\Desktop\freeauto.ch\src\pages\home.tsx
-import { useEffect, useState } from 'react'
-import { User } from '@supabase/supabase-js'
-import { CarCard } from '@/components/car-card'
-import { Filters } from '@/components/filters'
-import { AuthDialog } from '@/components/auth-dialog'
-import { Car, CarFilter } from '@/types'
-import { supabase } from '@/lib/supabase'
-import { Loader2, Plus, LogOut, Shield } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
-import { Helmet } from 'react-helmet-async'
-import { Badge } from '@/components/ui/badge'
-import { useToast } from '@/hooks/use-toast'
-import { LanguageSelector } from '@/components/language-selector'
-import { useTranslation } from 'react-i18next'
+import { useEffect, useState } from "react";
+import { User } from "@supabase/supabase-js";
+import { CarCard } from "@/components/car-card";
+import { Filters } from "@/components/filters";
+import { AuthDialog } from "@/components/auth-dialog";
+import { Car, CarFilter } from "@/types";
+import { supabase } from "@/lib/supabase";
+import { Loader2, Plus, LogOut, Shield } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Helmet } from "react-helmet-async";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { LanguageSelector } from "@/components/language-selector";
+import { useTranslation } from "react-i18next";
 
 interface HomeProps {
-  user: User | null
+  user: User | null;
 }
 
 export default function Home({ user }: HomeProps) {
-  const { t } = useTranslation()
-  const [cars, setCars] = useState<Car[]>([])
-  const [loading, setLoading] = useState(true)
-  const [filters, setFilters] = useState<CarFilter>({})
-  const [totalCount, setTotalCount] = useState<number>(0)
-  const [isAdmin, setIsAdmin] = useState(false)
-  const navigate = useNavigate()
-  const { toast } = useToast()
+  const { t } = useTranslation();
+  const [cars, setCars] = useState<Car[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState<CarFilter>({});
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
-    fetchCars()
-    checkAdminStatus()
-  }, [filters])
+    fetchCars();
+    checkAdminStatus();
+  }, [filters]);
 
   const checkAdminStatus = async () => {
-    if (!user) return
-    
+    if (!user) return;
+
     try {
-      const { data, error } = await supabase.rpc('is_admin_secure')
-      if (error) throw error
-      setIsAdmin(!!data)
+      const { data, error } = await supabase.rpc("is_admin_secure");
+      if (error) throw error;
+      setIsAdmin(!!data);
     } catch (error) {
-      console.error('Error checking admin status:', error)
+      console.error("Error checking admin status:", error);
     }
-  }
+  };
 
   const fetchCars = async () => {
     try {
       let query = supabase
-        .from('cars')
-        .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false })
+        .from("cars")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false });
 
       // Apply text search if searchTerms is provided
       if (filters.searchTerms) {
         if (Array.isArray(filters.searchTerms)) {
-          query = query.textSearch('full_search', filters.searchTerms.join(' '), {
-            type: 'websearch',
-            config: 'french'
-          })
+          query = query.textSearch(
+            "full_search",
+            filters.searchTerms.join(" "),
+            {
+              type: "websearch",
+              config: "french",
+            }
+          );
         } else {
-          query = query.textSearch('full_search', filters.searchTerms, {
-            type: 'websearch',
-            config: 'french'
-          })
+          query = query.textSearch("full_search", filters.searchTerms, {
+            type: "websearch",
+            config: "french",
+          });
         }
       }
 
       // Apply other filters
-      if (filters.minPrice) query = query.gte('price', filters.minPrice)
-      if (filters.maxPrice) query = query.lte('price', filters.maxPrice)
-      if (filters.minYear) query = query.gte('year', filters.minYear)
-      if (filters.maxMileage) query = query.lte('mileage', filters.maxMileage)
-      if (filters.type_vehicule?.length) query = query.in('type_vehicule', filters.type_vehicule)
-      if (filters.carburant?.length) query = query.in('carburant', filters.carburant)
-      if (filters.transmission?.length) query = query.in('transmission', filters.transmission)
-      if (filters.minPuissance) query = query.gte('puissance', filters.minPuissance)
-      if (filters.maxPuissance) query = query.lte('puissance', filters.maxPuissance)
-      if (filters.couleur?.length) query = query.in('couleur', filters.couleur)
-      if (filters.premiere_main) query = query.eq('premiere_main', true)
-      if (filters.expertisee) query = query.eq('expertisee', true)
-      if (filters.is_professional) query = query.eq('is_professional', true)
-      if (filters.city) query = query.eq('city', filters.city)
+      if (filters.minPrice) query = query.gte("price", filters.minPrice);
+      if (filters.maxPrice) query = query.lte("price", filters.maxPrice);
+      if (filters.minYear) query = query.gte("year", filters.minYear);
+      if (filters.maxMileage) query = query.lte("mileage", filters.maxMileage);
+      if (filters.type_vehicule?.length)
+        query = query.in("type_vehicule", filters.type_vehicule);
+      if (filters.carburant?.length)
+        query = query.in("carburant", filters.carburant);
+      if (filters.transmission?.length)
+        query = query.in("transmission", filters.transmission);
+      if (filters.minPuissance)
+        query = query.gte("puissance", filters.minPuissance);
+      if (filters.maxPuissance)
+        query = query.lte("puissance", filters.maxPuissance);
+      if (filters.couleur?.length) query = query.in("couleur", filters.couleur);
+      if (filters.premiere_main) query = query.eq("premiere_main", true);
+      if (filters.expertisee) query = query.eq("expertisee", true);
+      if (filters.is_professional) query = query.eq("is_professional", true);
+      if (filters.city) query = query.eq("city", filters.city);
 
-      const { data, error, count } = await query
+      const { data, error, count } = await query;
 
-      if (error) throw error
+      if (error) throw error;
 
-      setCars(data || [])
-      setTotalCount(count || 0)
+      setCars(data || []);
+      setTotalCount(count || 0);
     } catch (error) {
-      console.error('Error fetching cars:', error)
+      console.error("Error fetching cars:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut()
-      if (error) throw error
-      
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
       toast({
         title: t("Déconnexion réussie"),
         description: t("À bientôt sur FreeAuto !"),
-      })
-      
-      navigate('/')
+      });
+
+      navigate("/");
     } catch (error) {
-      console.error('Error logging out:', error)
+      console.error("Error logging out:", error);
       toast({
         title: t("Erreur"),
         description: t("Une erreur est survenue lors de la déconnexion"),
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   // Generate meta description based on filters
   const generateMetaDescription = () => {
-    const parts = []
-    
+    const parts = [];
+
     if (filters.type_vehicule?.length) {
-      parts.push(`${filters.type_vehicule.join(', ')}`)
+      parts.push(`${filters.type_vehicule.join(", ")}`);
     }
-    
+
     if (filters.carburant?.length) {
-      parts.push(`${filters.carburant.join(', ')}`)
+      parts.push(`${filters.carburant.join(", ")}`);
     }
-    
+
     if (filters.minPrice || filters.maxPrice) {
-      const priceRange = []
-      if (filters.minPrice) priceRange.push(`${t('à partir de')} ${filters.minPrice} CHF`)
-      if (filters.maxPrice) priceRange.push(`${t('jusqu\'à')} ${filters.maxPrice} CHF`)
-      parts.push(priceRange.join(' '))
+      const priceRange = [];
+      if (filters.minPrice)
+        priceRange.push(`${t("à partir de")} ${filters.minPrice} CHF`);
+      if (filters.maxPrice)
+        priceRange.push(`${t("jusqu'à")} ${filters.maxPrice} CHF`);
+      parts.push(priceRange.join(" "));
     }
-    
+
     if (filters.city) {
-      parts.push(`${t('à')} ${filters.city}`)
+      parts.push(`${t("à")} ${filters.city}`);
     }
-    
+
     if (parts.length > 0) {
-      return `${t('Trouvez votre voiture idéale')} ${parts.join(', ')} ${t('sur FreeAuto, le marché automobile suisse')}.`
+      return `${t("Trouvez votre voiture idéale")} ${parts.join(", ")} ${t(
+        "sur FreeAuto, le marché automobile suisse"
+      )}.`;
     }
-    
-    return t("Trouvez votre prochaine voiture sur FreeAuto, le marché automobile suisse. Annonces de particuliers et professionnels.")
-  }
+
+    return t(
+      "Trouvez votre prochaine voiture sur FreeAuto, le marché automobile suisse. Annonces de particuliers et professionnels."
+    );
+  };
 
   return (
     <>
       <Helmet>
-        <title>FreeAuto - {t('Le marché automobile suisse')}</title>
+        <title>FreeAuto - {t("Le marché automobile suisse")}</title>
         <meta name="description" content={generateMetaDescription()} />
-        <meta property="og:title" content={`FreeAuto - ${t('Le marché automobile suisse')}`} />
+        <meta
+          property="og:title"
+          content={`FreeAuto - ${t("Le marché automobile suisse")}`}
+        />
         <meta property="og:description" content={generateMetaDescription()} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:title" content={`FreeAuto - ${t('Le marché automobile suisse')}`} />
+        <meta
+          name="twitter:title"
+          content={`FreeAuto - ${t("Le marché automobile suisse")}`}
+        />
         <meta name="twitter:description" content={generateMetaDescription()} />
         <link rel="canonical" href={window.location.origin} />
       </Helmet>
@@ -176,25 +197,27 @@ export default function Home({ user }: HomeProps) {
                 {user ? (
                   <>
                     <Button asChild variant="ghost">
-                      <Link to="/mes-annonces">{t('Mes annonces')}</Link>
+                      <Link to="/mes-annonces">{t("Mes annonces")}</Link>
                     </Button>
                     {isAdmin && (
                       <Button asChild variant="ghost" className="gap-2">
                         <Link to="/admin">
                           <Shield className="h-4 w-4" />
-                          {t('Administration')}
+                          {t("Administration")}
                         </Link>
                       </Button>
                     )}
                     <Button asChild>
                       <Link to="/creer-annonce" className="gap-2">
                         <Plus className="h-4 w-4" />
-                        <span className="hidden sm:inline">{t('Créer une annonce')}</span>
-                        <span className="sm:hidden">{t('Créer')}</span>
+                        <span className="hidden sm:inline">
+                          {t("Créer une annonce")}
+                        </span>
+                        <span className="sm:hidden">{t("Créer")}</span>
                       </Link>
                     </Button>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="icon"
                       onClick={handleLogout}
                       title={t("Se déconnecter")}
@@ -206,8 +229,10 @@ export default function Home({ user }: HomeProps) {
                   <AuthDialog>
                     <Button className="gap-2">
                       <Plus className="h-4 w-4" />
-                      <span className="hidden sm:inline">{t('Créer une annonce')}</span>
-                      <span className="sm:hidden">{t('Créer')}</span>
+                      <span className="hidden sm:inline">
+                        {t("Créer une annonce")}
+                      </span>
+                      <span className="sm:hidden">{t("Créer")}</span>
                     </Button>
                   </AuthDialog>
                 )}
@@ -223,7 +248,7 @@ export default function Home({ user }: HomeProps) {
               {!loading && (
                 <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
                   <Badge variant="secondary" className="font-normal">
-                    {totalCount} {totalCount > 1 ? t('annonces') : t('annonce')}
+                    {totalCount} {totalCount > 1 ? t("annonces") : t("annonce")}
                   </Badge>
                 </div>
               )}
@@ -244,23 +269,27 @@ export default function Home({ user }: HomeProps) {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
-              <div className="text-4xl font-serif mb-4 text-gray-300">FreeAuto</div>
-              <h2 className="text-2xl font-semibold text-gray-600">{t('Aucune annonce')}</h2>
+              <div className="text-4xl font-serif mb-4 text-gray-300">
+                FreeAuto
+              </div>
+              <h2 className="text-2xl font-semibold text-gray-600">
+                {t("Aucune annonce")}
+              </h2>
               <p className="text-gray-500 mt-2 mb-6">
-                {t('Aucune annonce ne correspond à vos critères')}
+                {t("Aucune annonce ne correspond à vos critères")}
               </p>
               {user ? (
                 <Button asChild>
                   <Link to="/creer-annonce" className="gap-2">
                     <Plus className="h-4 w-4" />
-                    {t('Publier une annonce')}
+                    {t("Publier une annonce")}
                   </Link>
                 </Button>
               ) : (
                 <AuthDialog>
                   <Button className="gap-2">
                     <Plus className="h-4 w-4" />
-                    {t('Publier une annonce')}
+                    {t("Publier une annonce")}
                   </Button>
                 </AuthDialog>
               )}
@@ -269,5 +298,5 @@ export default function Home({ user }: HomeProps) {
         </main>
       </div>
     </>
-  )
+  );
 }
