@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { LanguageSelector } from "@/components/language-selector";
 import { useTranslation } from "react-i18next";
+import { useRedirectToLanguagePath } from "@/lib/utils";
 
 interface HomeProps {
   user: User | null;
@@ -116,7 +117,7 @@ export default function Home({ user }: HomeProps) {
         description: t("À bientôt sur FreeAuto !"),
       });
 
-      navigate("/");
+      navigate(useRedirectToLanguagePath("/"));
     } catch (error) {
       console.error("Error logging out:", error);
       toast({
@@ -188,7 +189,7 @@ export default function Home({ user }: HomeProps) {
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="container px-4 mx-auto">
             <div className="h-16 flex items-center justify-between">
-              <Link to="/" className="flex items-center gap-2">
+              <Link to={useRedirectToLanguagePath("/")} className="flex items-center gap-2">
                 <h1 className="text-2xl font-serif">FreeAuto</h1>
               </Link>
 
@@ -197,18 +198,18 @@ export default function Home({ user }: HomeProps) {
                 {user ? (
                   <>
                     <Button asChild variant="ghost">
-                      <Link to="/mes-annonces">{t("Mes annonces")}</Link>
+                      <Link to={useRedirectToLanguagePath("/mes-annonces")}>{t("Mes annonces")}</Link>
                     </Button>
                     {isAdmin && (
                       <Button asChild variant="ghost" className="gap-2">
-                        <Link to="/admin">
+                        <Link to={useRedirectToLanguagePath("/admin")}>
                           <Shield className="h-4 w-4" />
                           {t("Administration")}
                         </Link>
                       </Button>
                     )}
                     <Button asChild>
-                      <Link to="/creer-annonce" className="gap-2">
+                      <Link to={useRedirectToLanguagePath("/creer-annonce")} className="gap-2">
                         <Plus className="h-4 w-4" />
                         <span className="hidden sm:inline">
                           {t("Créer une annonce")}
@@ -280,7 +281,7 @@ export default function Home({ user }: HomeProps) {
               </p>
               {user ? (
                 <Button asChild>
-                  <Link to="/creer-annonce" className="gap-2">
+                  <Link to={useRedirectToLanguagePath("/creer-annonce")} className="gap-2">
                     <Plus className="h-4 w-4" />
                     {t("Publier une annonce")}
                   </Link>

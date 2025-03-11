@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Car } from "@/types";
 import { supabase } from "@/lib/supabase";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, useRedirectToLanguagePath } from "@/lib/utils";
 import { AuthDialog } from "@/components/auth-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -123,7 +123,7 @@ export function CarDetails() {
             {t("Cette annonce n'existe plus ou a été supprimée.")}
           </p>
           <Button asChild className="mt-4">
-            <Link to="/">{t("Retour aux annonces")}</Link>
+            <Link to={useRedirectToLanguagePath("/")}>{t("Retour aux annonces")}</Link>
           </Button>
         </div>
       </div>
@@ -143,7 +143,7 @@ export function CarDetails() {
             <div className="h-16 flex items-center justify-between px-4">
               <div className="flex items-center gap-4">
                 <Link
-                  to="/"
+                  to={useRedirectToLanguagePath("/")}
                   className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <ArrowLeft className="h-4 w-4" />

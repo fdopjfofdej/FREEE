@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import CreateListing from "./create-listing"
+import { useRedirectToLanguagePath } from "@/lib/utils"
 
 export default function EditListing() {
   const { id } = useParams()
@@ -85,7 +86,7 @@ export default function EditListing() {
           <h1 className="text-2xl font-bold text-gray-900">Accès refusé</h1>
           <p className="mt-2 text-gray-600">Vous n'êtes pas autorisé à modifier cette annonce.</p>
           <Button asChild className="mt-4">
-            <Link to="/mes-annonces">Retour à mes annonces</Link>
+            <Link to={useRedirectToLanguagePath("/mes-annonces")}>Retour à mes annonces</Link>
           </Button>
         </div>
       </div>

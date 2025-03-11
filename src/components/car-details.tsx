@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom"
 import { Helmet } from "react-helmet-async"
 import { Car } from "@/types"
 import { supabase } from "@/lib/supabase"
-import { formatCurrency, slugify, generateMetaDescription } from "@/lib/utils"
+import { formatCurrency, slugify, generateMetaDescription, useRedirectToLanguagePath } from "@/lib/utils"
 import { AuthDialog } from "@/components/auth-dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -109,7 +109,7 @@ export function CarDetails() {
       // Redirect to the canonical URL if the slug is missing or incorrect
       if (data && !slug) {
         const correctSlug = slugify(`${data.brand}-${data.model}-${data.year}`)
-        navigate(`/annonce/${data.id}/${correctSlug}`, { replace: true })
+        navigate(useRedirectToLanguagePath(`/annonce/${data.id}/${correctSlug}`), { replace: true })
       }
     } catch (error) {
       console.error("Error fetching car:", error)
@@ -171,7 +171,7 @@ export function CarDetails() {
           <h1 className="text-2xl font-bold text-gray-900">{t('Annonce introuvable')}</h1>
           <p className="mt-2 text-gray-600">{t("Cette annonce n'existe plus ou a été supprimée.")}</p>
           <Button asChild className="mt-4">
-            <Link to="/">{t('Retour aux annonces')}</Link>
+            <Link to={useRedirectToLanguagePath("/")}>{t('Retour aux annonces')}</Link>
           </Button>
         </div>
       </div>
@@ -245,7 +245,7 @@ export function CarDetails() {
           <div className="container px-4 mx-auto">
             <div className="h-16 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+                <Link to={useRedirectToLanguagePath("/")} className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
                   <ArrowLeft className="h-4 w-4" />
                 </Link>
                 <LanguageSelector />

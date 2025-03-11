@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { LanguageSelector } from '@/components/language-selector'
 import { useTranslation } from 'react-i18next'
+import { useRedirectToLanguagePath } from '@/lib/utils';
 
 export function MyListings() {
   const { t } = useTranslation()
@@ -107,13 +108,13 @@ export function MyListings() {
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
-              <Link to="/" className="flex items-center gap-2">
+              <Link to={useRedirectToLanguagePath("/")} className="flex items-center gap-2">
                 <span className="text-2xl font-serif">FreeAuto</span>
               </Link>
               <div className='flex items-center gap-4'>
                 <LanguageSelector />
                 <Button asChild variant="ghost">
-                  <Link to="/">{t("Retour aux annonces")}</Link>
+                  <Link to={useRedirectToLanguagePath("/")}>{t("Retour aux annonces")}</Link>
                 </Button>
               </div>
             </div>
@@ -124,7 +125,7 @@ export function MyListings() {
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-2xl font-bold">{t("Mes annonces")}</h1>
             <Button asChild>
-              <Link to="/creer-annonce">{t("Créer une annonce")}</Link>
+              <Link to={useRedirectToLanguagePath("/creer-annonce")}>{t("Créer une annonce")}</Link>
             </Button>
           </div>
 
@@ -193,7 +194,7 @@ export function MyListings() {
                 {t("Vous n'avez pas encore publié d'annonces")}
               </p>
               <Button asChild>
-                <Link to="/creer-annonce">{t("Publier une annonce")}</Link>
+                <Link to={useRedirectToLanguagePath("/creer-annonce")}>{t("Publier une annonce")}</Link>
               </Button>
             </div>
           )}

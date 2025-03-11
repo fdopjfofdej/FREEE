@@ -4,7 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
-import { cn, slugify } from "@/lib/utils";
+import { cn, slugify, useRedirectToLanguagePath } from "@/lib/utils";
 import {
   Form,
   FormControl,
@@ -315,7 +315,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
         });
       }
 
-      navigate("/mes-annonces");
+      navigate(useRedirectToLanguagePath("/mes-annonces"));
     } catch (error: any) {
       toast({
         title: "Erreur",
@@ -349,7 +349,7 @@ export default function CreateListing({ initialData }: CreateListingProps) {
             <LanguageSelector />
             <Button
               variant="ghost"
-              onClick={() => navigate("/mes-annonces")}
+              onClick={() => navigate(useRedirectToLanguagePath("/mes-annonces"))}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />

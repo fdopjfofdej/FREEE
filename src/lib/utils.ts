@@ -65,3 +65,12 @@ export function generateMetaDescription(car: any): string {
     
   return `${details}. ${description}`;
 }
+
+export const useRedirectToLanguagePath = (path: string) => {
+  const location = window.location;
+  const currentLanguage = location.pathname.split('/')[1];
+  const newPath = `/${currentLanguage}${path}`;
+  console.log(newPath);
+
+  return newPath;
+};

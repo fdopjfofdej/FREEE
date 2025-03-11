@@ -42,6 +42,7 @@ import {
 } from 'lucide-react'
 import { formatDistance } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import { useRedirectToLanguagePath } from '@/lib/utils'
 
 export default function AdminPanel() {
   const [isAdmin, setIsAdmin] = useState(false)
@@ -400,7 +401,7 @@ export default function AdminPanel() {
             Vous n'avez pas les permissions nécessaires pour accéder à cette page d'administration.
           </p>
           <Button asChild className="w-full">
-            <Link to="/">Retour à l'accueil</Link>
+            <Link to={useRedirectToLanguagePath("/")}>Retour à l'accueil</Link>
           </Button>
         </div>
       </div>

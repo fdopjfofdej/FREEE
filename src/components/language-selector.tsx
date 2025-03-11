@@ -1,13 +1,19 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export function LanguageSelector() {
   const { i18n } = useTranslation();
   const currentLanguage = i18n.language;
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
     localStorage.setItem("selectedLanguage", lng);
+
+    const newPath = location.pathname.replace(/^\/(fr|en|de)/, `/${lng}`);
+    navigate(newPath);
   };
 
   useEffect(() => {
