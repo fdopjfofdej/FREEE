@@ -12,7 +12,7 @@ export async function generateSitemap() {
   try {
     const { data: cars, error } = await supabase
       .from("cars")
-      .select("id")
+      .select("slug")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -20,22 +20,32 @@ export async function generateSitemap() {
     }
     const baseUrl = "https://freeauto.ch";
 
+    const languages = [
+      "fr",
+      "de",
+      "en"
+    ]
+
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
-    xml += "  <url>\n";
-    xml += "    <loc>" + baseUrl + "/</loc>\n";
-    xml += "    <changefreq>daily</changefreq>\n";
-    xml += "    <priority>1.0</priority>\n";
-    xml += "  </url>\n";
+    for (const language of languages) {
+      xml += "  <url>\n";
+      xml += "    <loc>" + baseUrl + "/" + language + "/</loc>\n";
+      xml += "    <changefreq>daily</changefreq>\n";
+      xml += "    <priority>1.0</priority>\n";
+      xml += "  </url>\n";
+    }
 
     if (cars) {
-      for (const car of cars) {
-        xml += "  <url>\n";
-        xml += "    <loc>" + baseUrl + "/annonce/" + car.id + "</loc>\n";
-        xml += "    <changefreq>weekly</changefreq>\n";
-        xml += "    <priority>0.8</priority>\n";
-        xml += "  </url>\n";
+      for (const lang of languages) {
+        for (const car of cars) {
+          xml += "  <url>\n";
+          xml += "    <loc>" + baseUrl + "/" + lang + "/ads/" + car.slug + "</loc>\n";
+          xml += "    <changefreq>weekly</changefreq>\n";
+          xml += "    <priority>0.8</priority>\n";
+          xml += "  </url>\n";
+        }
       }
     }
 
