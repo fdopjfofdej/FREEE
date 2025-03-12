@@ -190,7 +190,7 @@ export default function Home({ user }: HomeProps) {
           <div className="container px-4 mx-auto">
             <div className="h-16 flex items-center justify-between">
               <Link to={useRedirectToLanguagePath("/")} className="flex items-center gap-2">
-                <h1 className="text-2xl font-serif">FreeAuto</h1>
+                <h1 className="text-2xl font-serif">FreeAuto-CH</h1>
               </Link>
 
               <div className="flex items-center gap-4">
