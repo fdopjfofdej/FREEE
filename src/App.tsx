@@ -78,7 +78,11 @@ export default function App() {
         <Route path="/en/create-ad" element={<CreateListing />} />
         <Route path="/en/modifier-annonce/:id" element={<EditListing />} />
         <Route path="/en/dashboard" element={<AdminPanel />} />
+
+        {/* Sitemap Route */}
         <Route path="/sitemap.xml" element={<SitemapRoute />} />
+
+        {/* 404 Route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
