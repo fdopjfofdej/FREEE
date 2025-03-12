@@ -1,414 +1,713 @@
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { CarFilter, TYPE_VEHICULES, CARBURANTS, TRANSMISSIONS, COULEURS } from "@/types"
+import { useState, useRef, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetClose,
-} from "@/components/ui/sheet"
-import { SlidersHorizontal, X, MapPin, Euro, Calendar, Gauge, Power, Car, Paintbrush } from "lucide-react"
-import { Switch } from "@/components/ui/switch"
-import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
+  CarFilter,
+  TYPE_VEHICULES,
+  CARBURANTS,
+  TRANSMISSIONS,
+  COULEURS,
+} from "@/types";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import { cn } from "@/lib/utils"
-import { useTranslation } from 'react-i18next';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  SlidersHorizontal,
+  MapPin,
+  Euro,
+  Calendar,
+  Gauge,
+  Power,
+  Car,
+  Paintbrush,
+  Check,
+} from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface FiltersProps {
-  onFilterChange: (filters: CarFilter) => void
+  onFilterChange: (filters: CarFilter) => void;
 }
 
 export function Filters({ onFilterChange }: FiltersProps) {
   const { t } = useTranslation();
-  const [filters, setFilters] = useState<CarFilter>({})
-  const [open, setOpen] = useState(false)
+  const [filters, setFilters] = useState<CarFilter>({});
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const handleFilterChange = (key: keyof CarFilter, value: any) => {
-    const newFilters = { ...filters, [key]: value }
+    const newFilters = { ...filters, [key]: value };
     if (!value) {
-      delete newFilters[key]
+      delete newFilters[key];
     }
-    setFilters(newFilters)
-    onFilterChange(newFilters)
-  }
+    setFilters(newFilters);
+    onFilterChange(newFilters);
+  };
 
   const handleMultiSelect = (key: keyof CarFilter, value: string) => {
-    const currentValues = filters[key] as string[] || []
+    const currentValues = (filters[key] as string[]) || [];
     const newValues = currentValues.includes(value)
-      ? currentValues.filter(v => v !== value)
-      : [...currentValues, value]
-    handleFilterChange(key, newValues.length > 0 ? newValues : undefined)
-  }
-
-  const getSelectedCount = (key: keyof CarFilter) => {
-    return (filters[key] as string[] || []).length
-  }
+      ? currentValues.filter((v) => v !== value)
+      : [...currentValues, value];
+    handleFilterChange(key, newValues.length > 0 ? newValues : undefined);
+  };
 
   const resetFilters = () => {
-    setFilters({})
-    onFilterChange({})
-    setOpen(false)
-  }
+    setFilters({});
+    onFilterChange({});
+    setActiveFilter(null);
+  };
 
-  const getActiveFilterCount = () => {
-    return Object.keys(filters).length
-  }
+  const isFilterActive = (
+    key:
+      | "city"
+      | "price"
+      | "year"
+      | "type"
+      | "fuel"
+      | "transmission"
+      | "color"
+      | "options"
+  ): boolean => {
+    if (key === "city" && filters.city) return true;
+    if (key === "price" && (filters.minPrice || filters.maxPrice)) return true;
+    if (key === "year" && (filters.minYear || filters.maxMileage)) return true;
+    if (key === "type" && filters.type_vehicule?.length) return true;
+    if (key === "fuel" && filters.carburant?.length) return true;
+    if (key === "transmission" && filters.transmission?.length) return true;
+    if (key === "color" && filters.couleur?.length) return true;
+    if (
+      key === "options" &&
+      (filters.premiere_main ||
+        filters.expertisee ||
+        filters.is_professional ||
+        filters.garantie)
+    )
+      return true;
+    return false;
+  };
+
+  const getActiveFiltersCount = (): number => {
+    return Object.keys(filters).length;
+  };
+
+  // Handle horizontal scrolling
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (scrollRef.current) {
+        e.preventDefault();
+        scrollRef.current.scrollLeft += e.deltaY;
+      }
+    };
+
+    const scrollElement = scrollRef.current;
+    if (scrollElement) {
+      scrollElement.addEventListener("wheel", handleWheel, { passive: false });
+    }
+
+    return () => {
+      if (scrollElement) {
+        scrollElement.removeEventListener("wheel", handleWheel);
+      }
+    };
+  }, []);
+
+  const renderFilterContent = () => {
+    switch (activeFilter) {
+      case "city":
+        return (
+          <div className="space-y-4 p-4">
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">{t("Ville")}</Label>
+              <Input
+                placeholder={t("Rechercher une ville")}
+                value={filters.city || ""}
+                onChange={(e) =>
+                  handleFilterChange(
+                    "city",
+                    e.target.value ? e.target.value : ""
+                  )
+                }
+                className="bg-white"
+                autoFocus
+              />
+            </div>
+          </div>
+        );
+      case "price":
+        return (
+          <div className="space-y-4 p-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">
+                  {t("Prix minimum")}
+                </Label>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  value={filters.minPrice || ""}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "minPrice",
+                      e.target.value ? Number(e.target.value) : undefined
+                    )
+                  }
+                  className="bg-white"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">
+                  {t("Prix maximum")}
+                </Label>
+                <Input
+                  type="number"
+                  placeholder="100000"
+                  value={filters.maxPrice || ""}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "maxPrice",
+                      e.target.value ? Number(e.target.value) : undefined
+                    )
+                  }
+                  className="bg-white"
+                />
+              </div>
+            </div>
+          </div>
+        );
+      case "year":
+        return (
+          <div className="space-y-4 p-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">
+                  {t("Année minimum")}
+                </Label>
+                <Input
+                  type="number"
+                  placeholder="2010"
+                  value={filters.minYear || ""}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "minYear",
+                      e.target.value ? Number(e.target.value) : undefined
+                    )
+                  }
+                  className="bg-white"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">
+                  {t("Kilométrage max")}
+                </Label>
+                <Input
+                  type="number"
+                  placeholder="100000"
+                  value={filters.maxMileage || ""}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "maxMileage",
+                      e.target.value ? Number(e.target.value) : undefined
+                    )
+                  }
+                  className="bg-white"
+                />
+              </div>
+            </div>
+          </div>
+        );
+      case "type":
+        return (
+          <div className="p-4">
+            <ScrollArea className="h-[300px] pr-3">
+              <div className="grid grid-cols-2 gap-2">
+                {TYPE_VEHICULES.map((type) => {
+                  const isSelected = (filters.type_vehicule || []).includes(
+                    type
+                  );
+                  return (
+                    <Button
+                      key={type}
+                      variant={isSelected ? "default" : "outline"}
+                      className={cn(
+                        "justify-start h-auto py-2 px-3 bg-white hover:bg-white/80",
+                        isSelected &&
+                          "bg-primary text-primary-foreground hover:bg-primary/90"
+                      )}
+                      onClick={() => handleMultiSelect("type_vehicule", type)}
+                    >
+                      {isSelected && <Check className="h-3 w-3 mr-2" />}
+                      {t(type)}
+                    </Button>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+          </div>
+        );
+      case "fuel":
+        return (
+          <div className="p-4">
+            <div className="grid grid-cols-2 gap-2">
+              {CARBURANTS.map((carburant) => {
+                const isSelected = (filters.carburant || []).includes(
+                  carburant
+                );
+                return (
+                  <Button
+                    key={carburant}
+                    variant={isSelected ? "default" : "outline"}
+                    className={cn(
+                      "justify-start h-auto py-2 px-3 bg-white hover:bg-white/80",
+                      isSelected &&
+                        "bg-primary text-primary-foreground hover:bg-primary/90"
+                    )}
+                    onClick={() => handleMultiSelect("carburant", carburant)}
+                  >
+                    {isSelected && <Check className="h-3 w-3 mr-2" />}
+                    {t(carburant)}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      case "transmission":
+        return (
+          <div className="p-4">
+            <div className="grid grid-cols-2 gap-2">
+              {TRANSMISSIONS.map((transmission) => {
+                const isSelected = (filters.transmission || []).includes(
+                  transmission
+                );
+                return (
+                  <Button
+                    key={transmission}
+                    variant={isSelected ? "default" : "outline"}
+                    className={cn(
+                      "justify-start h-auto py-2 px-3 bg-white hover:bg-white/80",
+                      isSelected &&
+                        "bg-primary text-primary-foreground hover:bg-primary/90"
+                    )}
+                    onClick={() =>
+                      handleMultiSelect("transmission", transmission)
+                    }
+                  >
+                    {isSelected && <Check className="h-3 w-3 mr-2" />}
+                    {t(transmission)}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      case "color":
+        return (
+          <div className="p-4">
+            <ScrollArea className="h-[300px] pr-3">
+              <div className="grid grid-cols-2 gap-2">
+                {COULEURS.map((couleur) => {
+                  const isSelected = (filters.couleur || []).includes(couleur);
+                  return (
+                    <Button
+                      key={couleur}
+                      variant={isSelected ? "default" : "outline"}
+                      className={cn(
+                        "justify-start h-auto py-2 px-3 bg-white hover:bg-white/80",
+                        isSelected &&
+                          "bg-primary text-primary-foreground hover:bg-primary/90"
+                      )}
+                      onClick={() => handleMultiSelect("couleur", couleur)}
+                    >
+                      {isSelected && <Check className="h-3 w-3 mr-2" />}
+                      {t(couleur)}
+                    </Button>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+          </div>
+        );
+      case "options":
+        return (
+          <div className="p-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between rounded-lg border bg-white p-3 transition-colors hover:bg-secondary/20">
+                <Label className="cursor-pointer">{t("Première main")}</Label>
+                <Switch
+                  checked={!!filters.premiere_main}
+                  onCheckedChange={(checked) =>
+                    handleFilterChange("premiere_main", checked)
+                  }
+                />
+              </div>
+              <div className="flex items-center justify-between rounded-lg border bg-white p-3 transition-colors hover:bg-secondary/20">
+                <Label className="cursor-pointer">
+                  {t("Véhicules expertisés")}
+                </Label>
+                <Switch
+                  checked={!!filters.expertisee}
+                  onCheckedChange={(checked) =>
+                    handleFilterChange("expertisee", checked)
+                  }
+                />
+              </div>
+              <div className="flex items-center justify-between rounded-lg border bg-white p-3 transition-colors hover:bg-secondary/20">
+                <Label className="cursor-pointer">
+                  {t("Vendeurs professionnels")}
+                </Label>
+                <Switch
+                  checked={!!filters.is_professional}
+                  onCheckedChange={(checked) =>
+                    handleFilterChange("is_professional", checked)
+                  }
+                />
+              </div>
+              <div className="flex items-center justify-between rounded-lg border bg-white p-3 transition-colors hover:bg-secondary/20">
+                <Label className="cursor-pointer">{t("Garantie")}</Label>
+                <Switch
+                  checked={!!filters.garantie}
+                  onCheckedChange={(checked) =>
+                    handleFilterChange("garantie", checked)
+                  }
+                />
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button 
-          variant="outline" 
-          className="relative group hover:border-primary/50 transition-colors"
+    <div className="relative w-full">
+      {/* Horizontal filter bar */}
+      <div
+        ref={scrollRef}
+        className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        <Button
+          variant="outline"
+          size="sm"
+          className={cn(
+            "whitespace-nowrap",
+            getActiveFiltersCount() > 0 && "pr-6 relative"
+          )}
+          onClick={resetFilters}
         >
-          <span className="flex items-center gap-2">
-            <SlidersHorizontal className="h-4 w-4" />
-            {t('Filtres')}
-          </span>
-          {getActiveFilterCount() > 0 && (
-            <Badge 
-              variant="default" 
-              className="absolute -top-2 -right-2 h-5 min-w-[20px] px-1"
+          <SlidersHorizontal className="h-3 w-3 mr-2" />
+          {t("Tous les filtres")}
+          {getActiveFiltersCount() > 0 && (
+            <Badge
+              variant="default"
+              className="absolute right-1 top-1 h-4 min-w-[16px] px-1 text-xs"
             >
-              {getActiveFilterCount()}
+              {getActiveFiltersCount()}
             </Badge>
           )}
-          <span className="absolute inset-x-0 h-px bottom-0 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform" />
         </Button>
-      </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-lg p-0">
-        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b p-4">
-          <SheetHeader className="flex flex-row items-center justify-between">
-            <SheetTitle className="text-xl font-semibold">{t('Filtres')}</SheetTitle>
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={resetFilters}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+
+        {/* City filter */}
+        <Dialog
+          open={activeFilter === "city"}
+          onOpenChange={(open) => setActiveFilter(open ? "city" : null)}
+        >
+          <DialogTrigger asChild>
+            <Button
+              variant={isFilterActive("city") ? "default" : "outline"}
+              size="sm"
+              className="whitespace-nowrap"
+            >
+              <MapPin className="h-3 w-3 mr-2" />
+              {t("Ville")}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{t("Localisation")}</DialogTitle>
+            </DialogHeader>
+            {renderFilterContent()}
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleFilterChange("city", "")}
               >
-                {t('Réinitialiser')}
+                {t("Réinitialiser")}
               </Button>
-              <SheetClose asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
-                  <X className="h-4 w-4" />
-                </Button>
-              </SheetClose>
+              <Button size="sm" onClick={() => setActiveFilter(null)}>
+                {t("Appliquer")}
+              </Button>
             </div>
-          </SheetHeader>
-        </div>
+          </DialogContent>
+        </Dialog>
 
-        <ScrollArea className="h-[calc(100vh-5rem)]">
-          <div className="p-4 space-y-6">
-            <Accordion type="single" collapsible defaultValue="location" className="space-y-2">
-              <AccordionItem value="location" className="border-none [&[data-state=open]>div]:bg-secondary/50">
-                <AccordionTrigger className="py-3 px-4 rounded-lg hover:bg-secondary/50 transition-colors data-[state=open]:rounded-b-none hover:no-underline">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-primary" />
-                    <span>{t('Localisation')}</span>
-                    {(filters.city || filters.searchTerms) && (
-                      <Badge variant="secondary" className="ml-2">
-                        {[filters.city, filters.searchTerms].filter(Boolean).length}
-                      </Badge>
-                    )}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 pb-4 px-4 rounded-b-lg bg-secondary/50">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">{t('Ville')}</Label>
-                      <Input
-                        placeholder={t('Rechercher une ville')}
-                        value={filters.city || ""}
-                        onChange={(e) => handleFilterChange("city", e.target.value ? e.target.value : "")}
-                        className="bg-white"
-                      />
-                    </div>
-                    
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+        {/* Price filter */}
+        <Dialog
+          open={activeFilter === "price"}
+          onOpenChange={(open) => setActiveFilter(open ? "price" : null)}
+        >
+          <DialogTrigger asChild>
+            <Button
+              variant={isFilterActive("price") ? "default" : "outline"}
+              size="sm"
+              className="whitespace-nowrap"
+            >
+              <Euro className="h-3 w-3 mr-2" />
+              {t("Prix")}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{t("Prix")}</DialogTitle>
+            </DialogHeader>
+            {renderFilterContent()}
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  handleFilterChange("minPrice", undefined);
+                  handleFilterChange("maxPrice", undefined);
+                }}
+              >
+                {t("Réinitialiser")}
+              </Button>
+              <Button size="sm" onClick={() => setActiveFilter(null)}>
+                {t("Appliquer")}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
-              <AccordionItem value="price" className="border-none [&[data-state=open]>div]:bg-secondary/50">
-                <AccordionTrigger className="py-3 px-4 rounded-lg hover:bg-secondary/50 transition-colors data-[state=open]:rounded-b-none hover:no-underline">
-                  <div className="flex items-center gap-2">
-                    <Euro className="h-4 w-4 text-primary" />
-                    <span>{t('Prix')}</span>
-                    {(filters.minPrice || filters.maxPrice) && (
-                      <Badge variant="secondary" className="ml-2">
-                        {[filters.minPrice, filters.maxPrice].filter(Boolean).length}
-                      </Badge>
-                    )}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 pb-4 px-4 rounded-b-lg bg-secondary/50">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">{t('Minimum')}</Label>
-                      <Input
-                        type="number"
-                        placeholder={t('Prix min')}
-                        value={filters.minPrice || ""}
-                        onChange={(e) => handleFilterChange("minPrice", e.target.value ? Number(e.target.value) : undefined)}
-                        className="bg-white"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">{t('Maximum')}</Label>
-                      <Input
-                        type="number"
-                        placeholder={t('Prix max')}
-                        value={filters.maxPrice || ""}
-                        onChange={(e) => handleFilterChange("maxPrice", e.target.value ? Number(e.target.value) : undefined)}
-                        className="bg-white"
-                      />
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+        {/* Year and Mileage filter */}
+        <Dialog
+          open={activeFilter === "year"}
+          onOpenChange={(open) => setActiveFilter(open ? "year" : null)}
+        >
+          <DialogTrigger asChild>
+            <Button
+              variant={isFilterActive("year") ? "default" : "outline"}
+              size="sm"
+              className="whitespace-nowrap"
+            >
+              <Calendar className="h-3 w-3 mr-2" />
+              {t("Année et km")}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{t("Année et kilométrage")}</DialogTitle>
+            </DialogHeader>
+            {renderFilterContent()}
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  handleFilterChange("minYear", undefined);
+                  handleFilterChange("maxMileage", undefined);
+                }}
+              >
+                {t("Réinitialiser")}
+              </Button>
+              <Button size="sm" onClick={() => setActiveFilter(null)}>
+                {t("Appliquer")}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
-              <AccordionItem value="year-mileage" className="border-none [&[data-state=open]>div]:bg-secondary/50">
-                <AccordionTrigger className="py-3 px-4 rounded-lg hover:bg-secondary/50 transition-colors data-[state=open]:rounded-b-none hover:no-underline">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-primary" />
-                    <span>{t('Année et kilométrage')}</span>
-                    {(filters.minYear || filters.maxMileage) && (
-                      <Badge variant="secondary" className="ml-2">
-                        {[filters.minYear, filters.maxMileage].filter(Boolean).length}
-                      </Badge>
-                    )}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 pb-4 px-4 rounded-b-lg bg-secondary/50">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">{t('Année minimum')}</Label>
-                      <Input
-                        type="number"
-                        placeholder={t('Année minimum')}
-                        value={filters.minYear || ""}
-                        onChange={(e) => handleFilterChange("minYear", e.target.value ? Number(e.target.value) : undefined)}
-                        className="bg-white"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">{t('Kilométrage max')}</Label>
-                      <Input
-                        type="number"
-                        placeholder={t('Km max')}
-                        value={filters.maxMileage || ""}
-                        onChange={(e) => handleFilterChange("maxMileage", e.target.value ? Number(e.target.value) : undefined)}
-                        className="bg-white"
-                      />
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+        {/* Vehicle Type filter */}
+        <Dialog
+          open={activeFilter === "type"}
+          onOpenChange={(open) => setActiveFilter(open ? "type" : null)}
+        >
+          <DialogTrigger asChild>
+            <Button
+              variant={isFilterActive("type") ? "default" : "outline"}
+              size="sm"
+              className="whitespace-nowrap"
+            >
+              <Car className="h-3 w-3 mr-2" />
+              {t("Type")}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{t("Type de véhicule")}</DialogTitle>
+            </DialogHeader>
+            {renderFilterContent()}
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleFilterChange("type_vehicule", undefined)}
+              >
+                {t("Réinitialiser")}
+              </Button>
+              <Button size="sm" onClick={() => setActiveFilter(null)}>
+                {t("Appliquer")}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
-              <AccordionItem value="type" className="border-none [&[data-state=open]>div]:bg-secondary/50">
-                <AccordionTrigger className="py-3 px-4 rounded-lg hover:bg-secondary/50 transition-colors data-[state=open]:rounded-b-none hover:no-underline">
-                  <div className="flex items-center gap-2">
-                    <Car className="h-4 w-4 text-primary" />
-                    <span>{t('Type de véhicule')}</span>
-                    {getSelectedCount("type_vehicule") > 0 && (
-                      <Badge variant="secondary" className="ml-2">
-                        {getSelectedCount("type_vehicule")}
-                      </Badge>
-                    )}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 pb-4 px-4 rounded-b-lg bg-secondary/50">
-                  <div className="grid grid-cols-2 gap-2">
-                    {TYPE_VEHICULES.map((type) => {
-                      const isSelected = (filters.type_vehicule || []).includes(type)
-                      return (
-                        <Button
-                          key={type}
-                          variant={isSelected ? "default" : "outline"}
-                          className={cn(
-                            "justify-start h-auto py-2 px-3 bg-white hover:bg-white/80",
-                            isSelected && "bg-primary text-primary-foreground hover:bg-primary/90"
-                          )}
-                          onClick={() => handleMultiSelect("type_vehicule", type)}
-                        >
-                          {t(type)}
-                        </Button>
-                      )
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+        {/* Fuel filter */}
+        <Dialog
+          open={activeFilter === "fuel"}
+          onOpenChange={(open) => setActiveFilter(open ? "fuel" : null)}
+        >
+          <DialogTrigger asChild>
+            <Button
+              variant={isFilterActive("fuel") ? "default" : "outline"}
+              size="sm"
+              className="whitespace-nowrap"
+            >
+              <Gauge className="h-3 w-3 mr-2" />
+              {t("Carburant")}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{t("Carburant")}</DialogTitle>
+            </DialogHeader>
+            {renderFilterContent()}
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleFilterChange("carburant", undefined)}
+              >
+                {t("Réinitialiser")}
+              </Button>
+              <Button size="sm" onClick={() => setActiveFilter(null)}>
+                {t("Appliquer")}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
-              <AccordionItem value="fuel" className="border-none [&[data-state=open]>div]:bg-secondary/50">
-                <AccordionTrigger className="py-3 px-4 rounded-lg hover:bg-secondary/50 transition-colors data-[state=open]:rounded-b-none hover:no-underline">
-                  <div className="flex items-center gap-2">
-                    <Gauge className="h-4 w-4 text-primary" />
-                    <span>{t('Carburant')}</span>
-                    {getSelectedCount("carburant") > 0 && (
-                      <Badge variant="secondary" className="ml-2">
-                        {getSelectedCount("carburant")}
-                      </Badge>
-                    )}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 pb-4 px-4 rounded-b-lg bg-secondary/50">
-                  <div className="grid grid-cols-2 gap-2">
-                    {CARBURANTS.map((carburant) => {
-                      const isSelected = (filters.carburant || []).includes(carburant)
-                      return (
-                        <Button
-                          key={carburant}
-                          variant={isSelected ? "default" : "outline"}
-                          className={cn(
-                            "justify-start h-auto py-2 px-3 bg-white hover:bg-white/80",
-                            isSelected && "bg-primary text-primary-foreground hover:bg-primary/90"
-                          )}
-                          onClick={() => handleMultiSelect("carburant", carburant)}
-                        >
-                          {t(carburant)}
-                        </Button>
-                      )
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+        {/* Transmission filter */}
+        <Dialog
+          open={activeFilter === "transmission"}
+          onOpenChange={(open) => setActiveFilter(open ? "transmission" : null)}
+        >
+          <DialogTrigger asChild>
+            <Button
+              variant={isFilterActive("transmission") ? "default" : "outline"}
+              size="sm"
+              className="whitespace-nowrap"
+            >
+              <Power className="h-3 w-3 mr-2" />
+              {t("Transmission")}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{t("Transmission")}</DialogTitle>
+            </DialogHeader>
+            {renderFilterContent()}
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleFilterChange("transmission", undefined)}
+              >
+                {t("Réinitialiser")}
+              </Button>
+              <Button size="sm" onClick={() => setActiveFilter(null)}>
+                {t("Appliquer")}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
-              <AccordionItem value="transmission" className="border-none [&[data-state=open]>div]:bg-secondary/50">
-                <AccordionTrigger className="py-3 px-4 rounded-lg hover:bg-secondary/50 transition-colors data-[state=open]:rounded-b-none hover:no-underline">
-                  <div className="flex items-center gap-2">
-                    <Power className="h-4 w-4 text-primary" />
-                    <span>{t('Transmission')}</span>
-                    {getSelectedCount("transmission") > 0 && (
-                      <Badge variant="secondary" className="ml-2">
-                        {getSelectedCount("transmission")}
-                      </Badge>
-                    )}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 pb-4 px-4 rounded-b-lg bg-secondary/50">
-                  <div className="grid grid-cols-2 gap-2">
-                    {TRANSMISSIONS.map((transmission) => {
-                      const isSelected = (filters.transmission || []).includes(transmission)
-                      return (
-                        <Button
-                          key={transmission}
-                          variant={isSelected ? "default" : "outline"}
-                          className={cn(
-                            "justify-start h-auto py-2 px-3 bg-white hover:bg-white/80",
-                            isSelected && "bg-primary text-primary-foreground hover:bg-primary/90"
-                          )}
-                          onClick={() => handleMultiSelect("transmission", transmission)}
-                        >
-                          {t(transmission)}
-                        </Button>
-                      )
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+        {/* Color filter */}
+        <Dialog
+          open={activeFilter === "color"}
+          onOpenChange={(open) => setActiveFilter(open ? "color" : null)}
+        >
+          <DialogTrigger asChild>
+            <Button
+              variant={isFilterActive("color") ? "default" : "outline"}
+              size="sm"
+              className="whitespace-nowrap"
+            >
+              <Paintbrush className="h-3 w-3 mr-2" />
+              {t("Couleur")}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{t("Couleur")}</DialogTitle>
+            </DialogHeader>
+            {renderFilterContent()}
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleFilterChange("couleur", undefined)}
+              >
+                {t("Réinitialiser")}
+              </Button>
+              <Button size="sm" onClick={() => setActiveFilter(null)}>
+                {t("Appliquer")}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
-              <AccordionItem value="color" className="border-none [&[data-state=open]>div]:bg-secondary/50">
-                <AccordionTrigger className="py-3 px-4 rounded-lg hover:bg-secondary/50 transition-colors data-[state=open]:rounded-b-none hover:no-underline">
-                  <div className="flex items-center gap-2">
-                    <Paintbrush className="h-4 w-4 text-primary" />
-                    <span>{t('Couleur')}</span>
-                    {getSelectedCount("couleur") > 0 && (
-                      <Badge variant="secondary" className="ml-2">
-                        {getSelectedCount("couleur")}
-                      </Badge>
-                    )}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 pb-4 px-4 rounded-b-lg bg-secondary/50">
-                  <div className="grid grid-cols-2 gap-2">
-                    {COULEURS.map((couleur) => {
-                      const isSelected = (filters.couleur || []).includes(couleur)
-                      return (
-                        <Button
-                          key={couleur}
-                          variant={isSelected ? "default" : "outline"}
-                          className={cn(
-                            "justify-start h-auto py-2 px-3 bg-white hover:bg-white/80",
-                            isSelected && "bg-primary text-primary-foreground hover:bg-primary/90"
-                          )}
-                          onClick={() => handleMultiSelect("couleur", couleur)}
-                        >
-                          {t(couleur)}
-                        </Button>
-                      )
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="options" className="border-none [&[data-state=open]>div]:bg-secondary/50">
-                <AccordionTrigger className="py-3 px-4 rounded-lg hover:bg-secondary/50 transition-colors data-[state=open]:rounded-b-none hover:no-underline">
-                  <div className="flex items-center gap-2">
-                    <SlidersHorizontal className="h-4 w-4 text-primary" />
-                    <span>{t('Options')}</span>
-                    {(filters.premiere_main || filters.expertisee || filters.is_professional) && (
-                      <Badge variant="secondary" className="ml-2">
-                        {[filters.premiere_main, filters.expertisee, filters.is_professional].filter(Boolean).length}
-                      </Badge>
-                    )}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 pb-4 px-4 rounded-b-lg bg-secondary/50">
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between rounded-lg border bg-white p-3 transition-colors hover:bg-secondary/20">
-                      <Label className="cursor-pointer">{t('Première main')}</Label>
-                      <Switch
-                        checked={!!filters.premiere_main}
-                        onCheckedChange={(checked) => handleFilterChange("premiere_main", checked)}
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between rounded-lg border bg-white p-3 transition-colors hover:bg-secondary/20">
-                      <Label className="cursor-pointer">{t('Véhicules expertisés')}</Label>
-                      <Switch
-                        checked={!!filters.expertisee}
-                        onCheckedChange={(checked) => handleFilterChange("expertisee", checked)}
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between rounded-lg border bg-white p-3 transition-colors hover:bg-secondary/20">
-                      <Label className="cursor-pointer">{t('Vendeurs professionnels')}</Label>
-                      <Switch
-                        checked={!!filters.is_professional}
-                        onCheckedChange={(checked) => handleFilterChange("is_professional", checked)}
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between rounded-lg border bg-white p-3 transition-colors hover:bg-secondary/20">
-                      <Label className="cursor-pointer">{t('Garantie')}</Label>
-                      <Switch
-                        checked={!!filters.garantie}
-                        onCheckedChange={(checked) => handleFilterChange("garantie", checked)}
-                      />
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
-        </ScrollArea>
-        
-        <div className="sticky bottom-0 p-4 border-t bg-background flex justify-end md:hidden">
-          <SheetClose asChild>
-            <Button>{t('Appliquer les filtres')}</Button>
-          </SheetClose>
-        </div>
-      </SheetContent>
-    </Sheet>
-  )
+        {/* Options filter */}
+        <Dialog
+          open={activeFilter === "options"}
+          onOpenChange={(open) => setActiveFilter(open ? "options" : null)}
+        >
+          <DialogTrigger asChild>
+            <Button
+              variant={isFilterActive("options") ? "default" : "outline"}
+              size="sm"
+              className="whitespace-nowrap"
+            >
+              <SlidersHorizontal className="h-3 w-3 mr-2" />
+              {t("Options")}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{t("Options")}</DialogTitle>
+            </DialogHeader>
+            {renderFilterContent()}
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  handleFilterChange("premiere_main", undefined);
+                  handleFilterChange("expertisee", undefined);
+                  handleFilterChange("is_professional", undefined);
+                  handleFilterChange("garantie", undefined);
+                }}
+              >
+                {t("Réinitialiser")}
+              </Button>
+              <Button size="sm" onClick={() => setActiveFilter(null)}>
+                {t("Appliquer")}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </div>
+  );
 }
